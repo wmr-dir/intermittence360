@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intermittence360 — Gestion administrative pour employeurs du spectacle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue: #0a1628;
+  --blue-mid: #102244;
+  --blue-bright: #1e3a6e;
+  --accent: #2563eb;
+  --accent-light: #3b82f6;
+  --accent-glow: rgba(37,99,235,.12);
+  --white: #ffffff;
+  --off-white: #f8f9fc;
+  --gray-50: #f1f4f9;
+  --gray-100: #e4eaf3;
+  --gray-300: #b0bcd0;
+  --gray-500: #6b7a95;
+  --gray-700: #2d3a52;
+  --text: #0d1626;
+  --radius: 14px;
+  --radius-lg: 22px;
+  --shadow: 0 4px 24px rgba(10,22,40,.08);
+  --shadow-lg: 0 12px 48px rgba(10,22,40,.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; }
+
+/* ── PAGES ── */
+.page { display: none; min-height: 100vh; }
+.page.active { display: block; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: rgba(255,255,255,.95); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--gray-100);
+  padding: 0 5vw; height: 68px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-size: 1.15rem; font-weight: 800; color: var(--blue);
+  cursor: pointer; letter-spacing: -.02em; flex-shrink: 0;
+  text-decoration: none;
+}
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; align-items: center; gap: .2rem; }
+.nav-link {
+  padding: .45rem .85rem; border-radius: 8px;
+  font-size: .82rem; font-weight: 500; color: var(--gray-500);
+  cursor: pointer; transition: all .18s; border: none; background: none;
+  white-space: nowrap;
+}
+.nav-link:hover { color: var(--text); background: var(--gray-50); }
+.nav-link.has-sub { display: flex; align-items: center; gap: .3rem; position: relative; }
+.nav-sub {
+  position: absolute; top: calc(100% + 8px); left: 0;
+  background: white; border: 1px solid var(--gray-100);
+  border-radius: var(--radius); padding: .5rem;
+  min-width: 200px; box-shadow: var(--shadow-lg);
+  opacity: 0; pointer-events: none; transform: translateY(-4px);
+  transition: all .2s;
+}
+.nav-link.has-sub:hover .nav-sub { opacity: 1; pointer-events: all; transform: none; }
+.nav-sub a {
+  display: block; padding: .6rem .9rem; border-radius: 8px;
+  font-size: .82rem; color: var(--gray-700); text-decoration: none;
+  transition: background .15s;
+}
+.nav-sub a:hover { background: var(--gray-50); color: var(--accent); }
+.nav-cta {
+  background: var(--accent); color: white !important;
+  padding: .5rem 1.3rem; border-radius: 8px;
+  font-size: .82rem; font-weight: 600; margin-left: .5rem;
+  cursor: pointer; border: none; transition: background .18s;
+}
+.nav-cta:hover { background: #1d4ed8; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: inherit; font-weight: 600; cursor: pointer;
+  border: none; border-radius: 10px; transition: all .2s;
+  text-decoration: none;
+}
+.btn-primary { background: var(--accent); color: white; padding: .85rem 2rem; font-size: .95rem; }
+.btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(37,99,235,.3); }
+.btn-secondary { background: var(--blue); color: white; padding: .85rem 2rem; font-size: .95rem; }
+.btn-secondary:hover { background: var(--blue-mid); transform: translateY(-1px); }
+.btn-outline { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); padding: .8rem 1.8rem; font-size: .9rem; }
+.btn-outline:hover { background: var(--accent-glow); }
+.btn-sm { padding: .6rem 1.3rem; font-size: .83rem; }
+.btn-lg { padding: 1rem 2.5rem; font-size: 1.05rem; border-radius: 12px; }
+.btn-full { width: 100%; justify-content: center; }
+.btn-white { background: white; color: var(--blue); }
+.btn-white:hover { background: var(--gray-50); }
+
+/* ── SECTION COMMONS ── */
+.section { padding: 6rem 5vw; }
+.section-sm { padding: 4rem 5vw; }
+.section-dark { background: var(--blue); }
+.section-gray { background: var(--off-white); }
+.label {
+  display: inline-block; font-size: .72rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent);
+  margin-bottom: .9rem;
+}
+.section-dark .label { color: #60a5fa; }
+.section-title { font-size: clamp(1.9rem, 3.5vw, 2.8rem); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+.section-dark .section-title { color: white; }
+.section-sub { font-size: 1rem; color: var(--gray-500); line-height: 1.75; margin-top: .9rem; max-width: 520px; }
+.section-dark .section-sub { color: rgba(255,255,255,.55); }
+.center { text-align: center; }
+.center .section-sub { margin: .9rem auto 0; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 9rem 5vw 6rem;
+  background: var(--white);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -200px; right: -100px;
+  width: 700px; height: 700px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(37,99,235,.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: var(--accent-glow); border: 1px solid rgba(37,99,235,.2);
+  color: var(--accent); border-radius: 100px;
+  padding: .35rem 1rem; font-size: .75rem; font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+.hero-eyebrow span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.2} }
+.hero h1 { font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 800; letter-spacing: -.04em; line-height: 1.05; color: var(--blue); }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero-desc { font-size: 1.05rem; color: var(--gray-500); line-height: 1.75; margin: 1.5rem 0 2rem; max-width: 500px; }
+.hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+.hero-trust { display: flex; align-items: center; gap: 1rem; margin-top: 2.5rem; }
+.hero-trust-text { font-size: .8rem; color: var(--gray-500); }
+.hero-trust-avatars { display: flex; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--gray-100); border: 2px solid white; margin-left: -8px; display: flex; align-items: center; justify-content: center; font-size: .65rem; font-weight: 700; color: var(--accent); }
+.hero-card {
+  background: white; border: 1px solid var(--gray-100); border-radius: var(--radius-lg);
+  padding: 1.5rem; box-shadow: var(--shadow-lg);
+  position: relative;
+}
+.hero-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.hc-logo { font-size: .85rem; font-weight: 800; color: var(--blue); }
+.hc-logo span { color: var(--accent); }
+.hc-badge { font-size: .7rem; font-weight: 600; padding: .3rem .75rem; border-radius: 100px; background: rgba(34,197,94,.1); color: #16a34a; }
+.hc-list { display: flex; flex-direction: column; gap: .75rem; }
+.hc-item { display: flex; align-items: center; gap: .75rem; padding: .85rem 1rem; border-radius: 10px; background: var(--off-white); }
+.hc-item-icon { font-size: 1.1rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.06); flex-shrink: 0; }
+.hc-item-text { flex: 1; }
+.hc-item-name { font-size: .83rem; font-weight: 600; color: var(--text); }
+.hc-item-sub { font-size: .73rem; color: var(--gray-500); margin-top: .1rem; }
+.hc-item-status { font-size: .7rem; font-weight: 600; padding: .2rem .6rem; border-radius: 100px; }
+.status-done { background: rgba(34,197,94,.1); color: #16a34a; }
+.status-wip { background: rgba(37,99,235,.1); color: var(--accent); }
+.status-new { background: rgba(245,158,11,.1); color: #d97706; }
+
+/* ── POUR QUI ── */
+.clients-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3.5rem; }
+.client-card {
+  background: white; border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg); padding: 2rem;
+  transition: all .25s; cursor: default;
+}
+.client-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: rgba(37,99,235,.2); }
+.client-card-icon { font-size: 2rem; margin-bottom: 1.2rem; }
+.client-card h3 { font-size: 1rem; font-weight: 700; color: var(--blue); margin-bottom: .6rem; }
+.client-card p { font-size: .855rem; color: var(--gray-500); line-height: 1.65; }
+.clients-cta { display: flex; justify-content: center; margin-top: 2.5rem; }
+
+/* ── PROCESS ── */
+.process-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--gray-100); border-radius: var(--radius-lg); overflow: hidden; margin-top: 3.5rem; }
+.process-step { background: white; padding: 2rem 1.5rem; position: relative; }
+.step-num { font-size: .7rem; font-weight: 700; color: var(--accent); letter-spacing: .1em; margin-bottom: 1rem; }
+.step-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+.step-title { font-size: .95rem; font-weight: 700; color: var(--blue); margin-bottom: .5rem; }
+.step-desc { font-size: .82rem; color: var(--gray-500); line-height: 1.6; }
+.step-arrow { display: none; }
+
+/* ── OFFRES ── */
+.pricing-toggle { display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 2rem 0 3.5rem; }
+.toggle-label { font-size: .85rem; font-weight: 600; color: var(--gray-500); }
+.toggle-label.active { color: var(--accent); }
+.toggle-switch {
+  width: 48px; height: 26px; background: var(--accent); border-radius: 100px;
+  position: relative; cursor: pointer; transition: background .2s;
+}
+.toggle-knob {
+  position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px; background: white; border-radius: 50%;
+  transition: transform .2s;
+}
+.toggle-switch.monthly .toggle-knob { transform: translateX(0); }
+.toggle-switch.annual .toggle-knob { transform: translateX(22px); }
+.save-badge { background: rgba(34,197,94,.12); color: #15803d; font-size: .7rem; font-weight: 700; padding: .2rem .6rem; border-radius: 100px; }
+
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1100px; margin: 0 auto; }
+.pricing-card { background: white; border: 1.5px solid var(--gray-100); border-radius: var(--radius-lg); padding: 2rem; position: relative; transition: all .25s; }
+.pricing-card:hover { box-shadow: var(--shadow-lg); }
+.pricing-card.featured { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), var(--shadow-lg); }
+.featured-tag { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; font-size: .7rem; font-weight: 700; padding: .3rem .9rem; border-radius: 100px; white-space: nowrap; }
+.plan-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--gray-500); margin-bottom: .75rem; }
+.plan-title { font-size: 1.3rem; font-weight: 800; color: var(--blue); margin-bottom: .4rem; }
+.plan-sub { font-size: .82rem; color: var(--gray-500); margin-bottom: 1.5rem; }
+.plan-price { display: flex; align-items: baseline; gap: .3rem; margin-bottom: .3rem; }
+.plan-amount { font-size: 2.8rem; font-weight: 800; color: var(--blue); letter-spacing: -.04em; }
+.plan-curr { font-size: 1.1rem; font-weight: 700; color: var(--gray-500); }
+.plan-period { font-size: .82rem; color: var(--gray-500); }
+.plan-entry { font-size: .78rem; color: var(--gray-500); margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100); }
+.plan-entry.free { color: var(--accent); font-weight: 600; }
+.plan-features { list-style: none; display: flex; flex-direction: column; gap: .7rem; margin-bottom: 1.75rem; }
+.plan-features li { display: flex; align-items: flex-start; gap: .65rem; font-size: .83rem; color: var(--gray-700); }
+.feat-check { color: var(--accent); font-size: .85rem; flex-shrink: 0; margin-top: .1rem; }
+.feat-x { color: var(--gray-300); font-size: .85rem; flex-shrink: 0; margin-top: .1rem; }
+.feat-x ~ span { color: var(--gray-300); }
+.plan-extras { font-size: .77rem; color: var(--gray-500); line-height: 1.7; border-top: 1px solid var(--gray-100); padding-top: 1rem; margin-top: 0; }
+.plan-extras strong { color: var(--gray-700); display: block; margin-bottom: .3rem; }
+
+/* ── TESTIMONIALS ── */
+.testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3.5rem; }
+.testi-card { background: white; border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 1.75rem; }
+.testi-stars { color: #f59e0b; font-size: .85rem; margin-bottom: 1rem; }
+.testi-text { font-size: .875rem; color: var(--gray-700); line-height: 1.7; margin-bottom: 1.25rem; font-style: italic; }
+.testi-author { display: flex; align-items: center; gap: .75rem; }
+.testi-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--accent-glow); border: 2px solid rgba(37,99,235,.15); display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+.testi-name { font-size: .83rem; font-weight: 700; color: var(--blue); }
+.testi-role { font-size: .75rem; color: var(--gray-500); margin-top: .1rem; }
+
+/* ── FAQ ── */
+.faq-list { max-width: 780px; margin: 3rem auto 0; }
+.faq-item { border-bottom: 1px solid var(--gray-100); }
+.faq-q {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.4rem 0; cursor: pointer; gap: 1rem;
+}
+.faq-q-text { font-size: .92rem; font-weight: 600; color: var(--text); }
+.faq-q-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--gray-50); border: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: .85rem; flex-shrink: 0; transition: transform .3s; color: var(--gray-500); }
+.faq-item.open .faq-q-icon { transform: rotate(45deg); background: var(--accent); color: white; border-color: var(--accent); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
+.faq-item.open .faq-a { max-height: 300px; }
+.faq-a p { padding: 0 0 1.4rem; font-size: .875rem; color: var(--gray-500); line-height: 1.75; }
+
+/* ── BLOG ── */
+.blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3.5rem; }
+.blog-card { background: white; border: 1px solid var(--gray-100); border-radius: var(--radius-lg); overflow: hidden; transition: all .25s; }
+.blog-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.blog-thumb { height: 180px; background: linear-gradient(135deg, var(--blue) 0%, var(--blue-bright) 100%); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+.blog-body { padding: 1.5rem; }
+.blog-tag { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: .6rem; }
+.blog-title { font-size: .97rem; font-weight: 700; color: var(--blue); line-height: 1.4; margin-bottom: .6rem; }
+.blog-excerpt { font-size: .82rem; color: var(--gray-500); line-height: 1.65; margin-bottom: 1.2rem; }
+.blog-footer { display: flex; align-items: center; justify-content: space-between; }
+.blog-date { font-size: .75rem; color: var(--gray-300); }
+
+/* ── NEWSLETTER ── */
+.newsletter { background: var(--blue); border-radius: var(--radius-lg); padding: 3.5rem; text-align: center; max-width: 700px; margin: 0 auto; }
+.newsletter h2 { font-size: 1.8rem; font-weight: 800; color: white; letter-spacing: -.03em; margin-bottom: .75rem; }
+.newsletter p { color: rgba(255,255,255,.55); font-size: .9rem; margin-bottom: 2rem; }
+.newsletter-form { display: flex; gap: .75rem; max-width: 440px; margin: 0 auto; }
+.newsletter-input {
+  flex: 1; padding: .85rem 1.1rem; border-radius: 10px;
+  border: none; font-family: inherit; font-size: .9rem;
+  background: rgba(255,255,255,.1); color: white;
+  outline: none; border: 1px solid rgba(255,255,255,.15);
+}
+.newsletter-input::placeholder { color: rgba(255,255,255,.4); }
+.newsletter-input:focus { border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.15); }
+
+/* ── FOOTER ── */
+footer { background: var(--blue); padding: 4rem 5vw 2.5rem; border-top: 1px solid rgba(255,255,255,.06); }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,.08); }
+.footer-brand p { font-size: .83rem; color: rgba(255,255,255,.4); line-height: 1.7; margin-top: 1rem; max-width: 260px; }
+.footer-contact { margin-top: 1.5rem; }
+.footer-contact a { display: flex; align-items: center; gap: .5rem; color: rgba(255,255,255,.5); font-size: .82rem; text-decoration: none; margin-bottom: .5rem; transition: color .18s; }
+.footer-contact a:hover { color: white; }
+.footer-col h4 { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.3); margin-bottom: 1.1rem; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .55rem; }
+.footer-col a { color: rgba(255,255,255,.5); font-size: .83rem; text-decoration: none; transition: color .18s; }
+.footer-col a:hover { color: white; }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 2rem; font-size: .78rem; color: rgba(255,255,255,.3); }
+
+/* ── DEMO PAGE ── */
+.demo-hero { background: var(--blue); padding: 9rem 5vw 5rem; text-align: center; }
+.demo-hero h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: white; letter-spacing: -.03em; margin-bottom: 1rem; }
+.demo-hero p { color: rgba(255,255,255,.55); font-size: 1rem; max-width: 520px; margin: 0 auto 2.5rem; }
+.video-frame { max-width: 860px; margin: 0 auto; background: var(--blue-mid); border-radius: var(--radius-lg); aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,.1); }
+.video-play { width: 72px; height: 72px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; transition: transform .2s; box-shadow: 0 8px 32px rgba(37,99,235,.5); }
+.video-play:hover { transform: scale(1.1); }
+.video-label { color: rgba(255,255,255,.4); font-size: .8rem; margin-top: 1rem; }
+.demo-features { padding: 5rem 5vw; background: var(--off-white); }
+.demo-features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+.demo-feat-card { background: white; border: 1px solid var(--gray-100); border-radius: var(--radius); padding: 1.75rem; }
+.demo-feat-card h3 { font-size: .95rem; font-weight: 700; color: var(--blue); margin-bottom: .6rem; }
+.demo-feat-card p { font-size: .83rem; color: var(--gray-500); line-height: 1.65; }
+.demo-feat-icon { font-size: 1.6rem; margin-bottom: 1rem; }
+.demo-cta-bar { background: white; padding: 3.5rem 5vw; text-align: center; border-top: 1px solid var(--gray-100); }
+.demo-cta-bar h2 { font-size: 1.8rem; font-weight: 800; color: var(--blue); margin-bottom: .75rem; }
+.demo-cta-bar p { color: var(--gray-500); margin-bottom: 2rem; font-size: .9rem; }
+.demo-cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+/* ── NOS CLIENTS PAGE ── */
+.clients-hero { background: var(--off-white); padding: 9rem 5vw 5rem; }
+.clients-hero-inner { max-width: 720px; }
+.clients-types-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 3.5rem; max-width: 1000px; }
+.ct-card { background: white; border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 2.2rem; display: flex; gap: 1.5rem; align-items: flex-start; transition: all .25s; }
+.ct-card:hover { box-shadow: var(--shadow-lg); border-color: rgba(37,99,235,.2); }
+.ct-icon { font-size: 2.2rem; flex-shrink: 0; }
+.ct-title { font-size: 1.05rem; font-weight: 700; color: var(--blue); margin-bottom: .5rem; }
+.ct-desc { font-size: .855rem; color: var(--gray-500); line-height: 1.65; }
+.ct-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; }
+.tag { font-size: .7rem; background: var(--accent-glow); color: var(--accent); padding: .25rem .65rem; border-radius: 100px; font-weight: 600; }
+.accomp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+.accomp-card { text-align: center; padding: 2rem; background: white; border: 1px solid var(--gray-100); border-radius: var(--radius-lg); }
+.accomp-card .big-num { font-size: 2.8rem; font-weight: 800; color: var(--accent); letter-spacing: -.04em; }
+.accomp-card p { font-size: .83rem; color: var(--gray-500); margin-top: .4rem; }
+
+/* ── PROCESSUS PAGE ── */
+.process-hero { background: var(--blue); padding: 9rem 5vw 5rem; }
+.process-timeline { max-width: 760px; margin: 4rem auto 0; padding: 0 5vw; }
+.timeline-item { display: grid; grid-template-columns: 56px 1fr; gap: 2rem; margin-bottom: 0; position: relative; }
+.timeline-item:not(:last-child)::before { content: ''; position: absolute; left: 27px; top: 56px; bottom: -2rem; width: 2px; background: var(--gray-100); }
+.timeline-num { width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; flex-shrink: 0; box-shadow: 0 4px 16px rgba(37,99,235,.3); }
+.timeline-content { padding: .5rem 0 3rem; }
+.timeline-content h3 { font-size: 1.1rem; font-weight: 700; color: var(--blue); margin-bottom: .6rem; }
+.timeline-content p { font-size: .875rem; color: var(--gray-500); line-height: 1.7; }
+.timeline-content ul { list-style: none; margin-top: .75rem; display: flex; flex-direction: column; gap: .4rem; }
+.timeline-content li { font-size: .83rem; color: var(--gray-500); display: flex; align-items: flex-start; gap: .5rem; }
+.timeline-content li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+/* ── SIMULATEUR ── */
+.sim-container { max-width: 800px; margin: 4rem auto 0; }
+.sim-card { background: white; border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow); }
+.sim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.form-group { margin-bottom: 0; }
+.form-label { display: block; font-size: .78rem; font-weight: 600; color: var(--text); margin-bottom: .45rem; letter-spacing: .02em; }
+.form-input, .form-select {
+  width: 100%; padding: .8rem 1rem; border: 1.5px solid var(--gray-100);
+  border-radius: 10px; font-family: inherit; font-size: .9rem;
+  color: var(--text); background: var(--off-white);
+  outline: none; transition: border-color .2s, box-shadow .2s;
+}
+.form-input:focus, .form-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.1); background: white; }
+.form-select { appearance: none; cursor: pointer; }
+.sim-result { background: var(--blue); border-radius: var(--radius); padding: 2rem; margin-top: 2rem; display: none; }
+.sim-result.show { display: block; }
+.sim-result h3 { color: white; font-size: 1rem; font-weight: 600; margin-bottom: 1.5rem; }
+.sim-result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.sim-result-item { text-align: center; }
+.sim-result-val { font-size: 1.6rem; font-weight: 800; color: white; letter-spacing: -.03em; }
+.sim-result-label { font-size: .72rem; color: rgba(255,255,255,.45); margin-top: .25rem; }
+.sim-note { font-size: .73rem; color: rgba(255,255,255,.35); margin-top: 1.25rem; text-align: center; }
+
+/* ── RESSOURCES ── */
+.resources-tabs { display: flex; gap: .5rem; margin-bottom: 3rem; flex-wrap: wrap; }
+.res-tab { padding: .55rem 1.2rem; border-radius: 100px; font-size: .83rem; font-weight: 600; cursor: pointer; border: 1.5px solid var(--gray-100); color: var(--gray-500); background: white; transition: all .18s; }
+.res-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+.resources-panel { display: none; }
+.resources-panel.active { display: block; }
+.salary-table { width: 100%; border-collapse: collapse; font-size: .855rem; }
+.salary-table th { background: var(--blue); color: white; padding: .85rem 1.1rem; text-align: left; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.salary-table td { padding: .85rem 1.1rem; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); }
+.salary-table tr:hover td { background: var(--off-white); }
+.salary-table tr:first-child th:first-child { border-radius: 10px 0 0 0; }
+.salary-table tr:first-child th:last-child { border-radius: 0 10px 0 0; }
+
+/* ── ONBOARDING FUNNEL ── */
+.funnel-page { display: none; }
+.funnel-page.active { display: block; }
+.funnel-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 7rem 1.5rem 4rem; background: var(--off-white); }
+.funnel-card { background: white; border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 3rem; max-width: 520px; width: 100%; box-shadow: var(--shadow-lg); }
+.funnel-back { display: flex; align-items: center; gap: .4rem; font-size: .8rem; color: var(--gray-500); cursor: pointer; margin-bottom: 2rem; transition: color .18s; }
+.funnel-back:hover { color: var(--accent); }
+.funnel-step-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); margin-bottom: .6rem; }
+.funnel-card h2 { font-size: 1.6rem; font-weight: 800; color: var(--blue); letter-spacing: -.03em; margin-bottom: .5rem; }
+.funnel-card > p { font-size: .875rem; color: var(--gray-500); margin-bottom: 2rem; line-height: 1.65; }
+.plan-recap { background: var(--off-white); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.75rem; border: 1px solid var(--gray-100); }
+.plan-recap-name { font-weight: 800; color: var(--blue); margin-bottom: .3rem; }
+.plan-recap-price { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+.plan-recap-features { margin-top: .8rem; font-size: .8rem; color: var(--gray-500); line-height: 1.65; }
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-group-v { margin-bottom: 1.25rem; }
+.progress-bar { height: 3px; background: var(--gray-100); border-radius: 100px; margin-bottom: 2.5rem; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 100px; transition: width .3s; }
+.success-icon { font-size: 3.5rem; text-align: center; margin-bottom: 1.5rem; }
+.success-title { text-align: center; font-size: 1.5rem; font-weight: 800; color: var(--blue); margin-bottom: .6rem; }
+.success-sub { text-align: center; font-size: .875rem; color: var(--gray-500); line-height: 1.7; margin-bottom: 2rem; }
+.stripe-mock { background: var(--off-white); border: 1px solid var(--gray-100); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.stripe-mock .stripe-label { font-size: .75rem; font-weight: 700; color: var(--gray-500); margin-bottom: .5rem; letter-spacing: .05em; text-transform: uppercase; }
+.stripe-card-row { display: flex; gap: 1rem; }
+.card-input-mock {
+  flex: 1; padding: .75rem 1rem; border: 1.5px solid var(--gray-100);
+  border-radius: 8px; font-family: inherit; font-size: .9rem; color: var(--text);
+  background: white; outline: none; transition: border-color .2s;
+}
+.card-input-mock:focus { border-color: var(--accent); }
+.stripe-badge { display: flex; align-items: center; justify-content: center; gap: .5rem; margin-top: 1rem; font-size: .72rem; color: var(--gray-300); }
+.stripe-logo { font-weight: 800; font-size: .8rem; color: #635bff; }
+
+/* ── PAGE NOS OFFRES (standalone) ── */
+.offers-hero { padding: 9rem 5vw 5rem; background: var(--off-white); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+.fade-up { animation: fadeUp .5s ease both; }
+
+/* ── SCROLL TOP ── */
+.scroll-top { position: fixed; bottom: 2rem; right: 2rem; width: 42px; height: 42px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; box-shadow: var(--shadow); transition: all .2s; opacity: 0; pointer-events: none; z-index: 99; }
+.scroll-top.visible { opacity: 1; pointer-events: all; }
+.scroll-top:hover { transform: translateY(-3px); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-right-col { display: none; }
+  .clients-grid, .services-grid { grid-template-columns: 1fr; }
+  .process-steps { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .testimonials-grid, .blog-grid, .demo-features-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+  nav { padding: 0 1.5rem; }
+  .nav-links { display: none; }
+  .section, .section-sm { padding: 4rem 1.5rem; }
+  .sim-grid, .form-row-2 { grid-template-columns: 1fr; }
+  .sim-result-grid { grid-template-columns: 1fr 1fr; }
+  .clients-types-grid { grid-template-columns: 1fr; }
+  .accomp-grid { grid-template-columns: 1fr; }
+  .timeline-item { grid-template-columns: 40px 1fr; gap: 1.2rem; }
+  .newsletter-form { flex-direction: column; }
+  .funnel-card { padding: 2rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" onclick="showPage('home')">Intermittence<span>360</span></a>
+  <div class="nav-links">
+    <button class="nav-link" onclick="showPage('clients')">Nos clients</button>
+    <button class="nav-link" onclick="showPage('demo')">Pourquoi GI360 ?</button>
+    <button class="nav-link" onclick="showPage('offres')">Nos offres</button>
+    <button class="nav-link" onclick="showPage('processus')">La solution 360</button>
+    <button class="nav-link" onclick="showPage('simulateur')">Simulateur</button>
+    <button class="nav-link has-sub">
+      Ressources ▾
+      <div class="nav-sub">
+        <a onclick="showPage('ressources')">FAQ</a>
+        <a onclick="showPage('ressources')">Grilles des salaires</a>
+        <a onclick="showPage('ressources')">Blog</a>
+      </div>
+    </button>
+    <button class="nav-cta" onclick="showFunnel('Essentiel')">Créer mon espace</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════ PAGE HOME ═══════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-eyebrow"><span></span> Gestion administrative · Spectacle vivant · La Réunion</div>
+        <h1>L'intermittence,<br><em>enfin simple.</em></h1>
+        <p class="hero-desc">Intermittence360 prend en charge toutes vos démarches employeur liées aux artistes et techniciens intermittents. Contrats, paies, déclarations — on s'occupe de tout, en votre nom.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary btn-lg" onclick="showPage('demo')">▶ Voir la démo</button>
+          <button class="btn btn-outline btn-lg" onclick="showPage('offres')">Voir nos offres</button>
+        </div>
+        <div class="hero-trust">
+          <div class="hero-trust-avatars">
+            <div class="avatar">LA</div><div class="avatar">MF</div><div class="avatar">JB</div><div class="avatar">+</div>
+          </div>
+          <p class="hero-trust-text">Rejoignez les structures culturelles qui nous font confiance</p>
+        </div>
+      </div>
+      <div class="hero-right-col">
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <span class="hc-logo">Intermittence<span>360</span></span>
+            <span class="hc-badge">● Actif</span>
+          </div>
+          <div class="hc-list">
+            <div class="hc-item">
+              <div class="hc-item-icon">📄</div>
+              <div class="hc-item-text">
+                <div class="hc-item-name">Contrat · Marc Leblanc</div>
+                <div class="hc-item-sub">Technicien son · 3 jours</div>
+              </div>
+              <span class="hc-item-status status-done">Traité</span>
+            </div>
+            <div class="hc-item">
+              <div class="hc-item-icon">💰</div>
+              <div class="hc-item-text">
+                <div class="hc-item-name">Bulletin de paie</div>
+                <div class="hc-item-sub">Sophie A. · Festival juillet</div>
+              </div>
+              <span class="hc-item-status status-wip">En cours</span>
+            </div>
+            <div class="hc-item">
+              <div class="hc-item-icon">🏛️</div>
+              <div class="hc-item-text">
+                <div class="hc-item-name">Déclaration URSSAF</div>
+                <div class="hc-item-sub">DSN mensuelle · Juillet</div>
+              </div>
+              <span class="hc-item-status status-done">Envoyé</span>
+            </div>
+            <div class="hc-item">
+              <div class="hc-item-icon">🎸</div>
+              <div class="hc-item-text">
+                <div class="hc-item-name">Nouveau contrat</div>
+                <div class="hc-item-sub">Julien Torres · Concerts</div>
+              </div>
+              <span class="hc-item-status status-new">À valider</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POUR QUI -->
+  <section class="section section-gray">
+    <div class="center">
+      <div class="label">Pour qui ?</div>
+      <h2 class="section-title">Fait pour les structures culturelles<br>qui emploient des intermittents</h2>
+      <p class="section-sub">Labels, festivals, compagnies — quelle que soit votre structure, Intermittence360 s'adapte à votre activité avec un accompagnement <strong>entièrement personnalisé.</strong></p>
+    </div>
+    <div class="clients-grid" style="max-width:1100px;margin:3.5rem auto 0">
+      <div class="client-card">
+        <div class="client-card-icon">🎵</div>
+        <h3>Labels & producteurs musicaux</h3>
+        <p>Enregistrements studio, résidences, tournées — gérez les paies de vos artistes et musiciens en toute conformité.</p>
+      </div>
+      <div class="client-card">
+        <div class="client-card-icon">🎭</div>
+        <h3>Compagnies de théâtre & danse</h3>
+        <p>Comédiens, danseurs, metteurs en scène — vos contrats intermittents rédigés et déclarés selon la convention applicable.</p>
+      </div>
+      <div class="client-card">
+        <div class="client-card-icon">🎪</div>
+        <h3>Festivals & événementiels</h3>
+        <p>Gestion multi-artistes pour vos événements ponctuels. Techniciens, artistes, équipes — tout est coordonné.</p>
+      </div>
+      <div class="client-card">
+        <div class="client-card-icon">🏛️</div>
+        <h3>Associations culturelles</h3>
+        <p>Loi 1901, vous devez employer des intermittents ? Nous créons votre écosystème employeur de A à Z.</p>
+      </div>
+      <div class="client-card">
+        <div class="client-card-icon">🎬</div>
+        <h3>Structures audiovisuelles</h3>
+        <p>Productions vidéo, clips, documentaires — techniciens audiovisuels, régisseurs et équipes sur vos tournages.</p>
+      </div>
+      <div class="client-card">
+        <div class="client-card-icon">🎙️</div>
+        <h3>Salles de spectacle & diffuseurs</h3>
+        <p>Accueil d'artistes en résidence, programmation régulière — simplifiez votre gestion employeur toute l'année.</p>
+      </div>
+    </div>
+    <div class="clients-cta">
+      <button class="btn btn-primary" onclick="showPage('clients')">Voir tous les profils accompagnés →</button>
+    </div>
+  </section>
+
+  <!-- PROCESSUS SIMPLIFIÉ -->
+  <section class="section">
+    <div style="max-width:1100px;margin:0 auto">
+      <div class="label">Comment ça marche</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1.5rem;margin-bottom:0">
+        <div>
+          <h2 class="section-title">Vous nous confiez,<br>on prend le relais.</h2>
+          <p class="section-sub">L'intermittence n'a jamais été aussi simple. Transmettez-nous les informations, notre équipe gère le reste.</p>
+        </div>
+        <button class="btn btn-primary" onclick="showPage('offres')">Souscrire maintenant</button>
+      </div>
+      <div class="process-steps" style="margin-top:3rem">
+        <div class="process-step">
+          <div class="step-num">ÉTAPE 01</div>
+          <div class="step-icon">🏢</div>
+          <div class="step-title">Vous créez votre espace</div>
+          <div class="step-desc">Inscription en 5 minutes. Notre équipe crée votre écosystème employeur (URSSAF, Audiens, France Travail…)</div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">ÉTAPE 02</div>
+          <div class="step-icon">📋</div>
+          <div class="step-title">Vous nous transmettez</div>
+          <div class="step-desc">Noms, dates, cachets de vos intermittents. Un simple formulaire suffit — en quelques clics depuis votre espace.</div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">ÉTAPE 03</div>
+          <div class="step-icon">⚙️</div>
+          <div class="step-title">On gère tout</div>
+          <div class="step-desc">Contrats, DPAE, bulletins de paie, déclarations URSSAF, Congés Spectacles, France Travail — 100% traité.</div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">ÉTAPE 04</div>
+          <div class="step-icon">✅</div>
+          <div class="step-title">Vous suivez en temps réel</div>
+          <div class="step-desc">Reporting mensuel, documents archivés, référent dédié disponible — vous restez informé à chaque étape.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OFFRES (ancre) -->
+  <section class="section section-gray" id="offres-anchor">
+    <div style="max-width:1100px;margin:0 auto">
+      <div class="center">
+        <div class="label">Nos offres</div>
+        <h2 class="section-title">Choisissez votre formule</h2>
+        <p class="section-sub">Sans engagement pour l'Essentiel. Formules annuelles pour économiser et bénéficier de plus.</p>
+      </div>
+      <div class="pricing-grid" style="margin-top:3rem">
+        <!-- ESSENTIEL -->
+        <div class="pricing-card">
+          <div class="plan-label">Pack mensuel</div>
+          <div class="plan-title">Essentiel</div>
+          <div class="plan-sub">Idéal pour démarrer, sans engagement.</div>
+          <div class="plan-price"><span class="plan-curr">€</span><span class="plan-amount">40</span></div>
+          <div class="plan-period">HT / mois</div>
+          <div class="plan-entry">+ Frais d'entrée 59 € HT</div>
+          <ul class="plan-features">
+            <li><span class="feat-check">✓</span> Coordination & suivi de vos paies</li>
+            <li><span class="feat-check">✓</span> Vérification des données transmises</li>
+            <li><span class="feat-check">✓</span> Reporting mensuel synthétique</li>
+            <li><span class="feat-check">✓</span> 3 contrats + 1 intermittent offerts</li>
+            <li><span class="feat-check">✓</span> Email dédié prioritaire</li>
+            <li><span class="feat-x">✕</span> <span>Option Mandat 360+</span></li>
+          </ul>
+          <button class="btn btn-outline btn-full" onclick="showFunnel('Essentiel')">Commencer</button>
+          <div class="plan-extras"><strong>Suppléments</strong>17,90 € HT / contrat suppl. · 15 € HT / intermittent suppl.<br>Option licence entrepreneur du spectacle : 150 € HT</div>
+        </div>
+        <!-- ESSENTIEL PLUS -->
+        <div class="pricing-card featured">
+          <div class="featured-tag">⭐ Le plus populaire</div>
+          <div class="plan-label">Pack annuel</div>
+          <div class="plan-title">Essentiel +</div>
+          <div class="plan-sub">Pour les structures actives toute l'année.</div>
+          <div class="plan-price"><span class="plan-curr">€</span><span class="plan-amount">24</span></div>
+          <div class="plan-period">HT / mois · facturé 288 € HT/an</div>
+          <div class="plan-entry free">✓ Frais d'entrée offerts</div>
+          <ul class="plan-features">
+            <li><span class="feat-check">✓</span> Coordination & suivi global à l'année</li>
+            <li><span class="feat-check">✓</span> Vérification & conseils sur les données</li>
+            <li><span class="feat-check">✓</span> Reporting annuel + rappels mensuels</li>
+            <li><span class="feat-check">✓</span> 3 contrats + 3 intermittents offerts</li>
+            <li><span class="feat-check">✓</span> 1 bilan social OU conseil intermittent</li>
+            <li><span class="feat-x">✕</span> <span>Option Mandat 360+</span></li>
+          </ul>
+          <button class="btn btn-primary btn-full" onclick="showFunnel('Essentiel +')">Commencer</button>
+          <div class="plan-extras"><strong>Suppléments</strong>17,90 € HT / contrat suppl. · 15 € HT / intermittent suppl.<br>Option licence entrepreneur du spectacle : 150 € HT</div>
+        </div>
+        <!-- PREMIUM -->
+        <div class="pricing-card">
+          <div class="plan-label">Pack annuel premium</div>
+          <div class="plan-title">360 Premium</div>
+          <div class="plan-sub">La gestion complète pour les structures ambitieuses.</div>
+          <div class="plan-price"><span class="plan-curr">€</span><span class="plan-amount">50</span></div>
+          <div class="plan-period">HT / mois · facturé 600 € HT/an</div>
+          <div class="plan-entry free">✓ Frais d'entrée offerts</div>
+          <ul class="plan-features">
+            <li><span class="feat-check">✓</span> Coordination complète</li>
+            <li><span class="feat-check">✓</span> Reporting mensuel & annuel détaillé</li>
+            <li><span class="feat-check">✓</span> Référent dédié email + WhatsApp</li>
+            <li><span class="feat-check">✓</span> 3 contrats + 6 intermittents offerts</li>
+            <li><span class="feat-check">✓</span> Bilan social + bilan subventions</li>
+            <li><span class="feat-check">✓</span> Sessions FAQ pour vos artistes</li>
+            <li><span class="feat-check">✓</span> <strong>Option Mandat 360+ éligible</strong></li>
+          </ul>
+          <button class="btn btn-secondary btn-full" onclick="showFunnel('360 Premium')">Commencer</button>
+          <div class="plan-extras"><strong>Suppléments</strong>17,90 € HT / contrat suppl. · 10 € HT / intermittent suppl.<br>Licence entrepreneur (cat. 2 & 3) : 200 € HT</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:2rem">
+        <button class="btn btn-outline" onclick="showPage('offres')">Comparer toutes les offres en détail →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TÉMOIGNAGES -->
+  <section class="section">
+    <div style="max-width:1100px;margin:0 auto">
+      <div class="center">
+        <div class="label">Ils nous font confiance</div>
+        <h2 class="section-title">Ce qu'ils disent de nous</h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Enfin un service qui comprend la réalité des petites structures culturelles à La Réunion. L'équipe est réactive, professionnelle et on gagne un temps fou sur toute la partie administrative."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">LA</div>
+            <div><div class="testi-name">Lola Armand</div><div class="testi-role">Directrice · Association Les Arts du Sud</div></div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Avant GI360, j'avais peur de faire des erreurs sur les déclarations. Maintenant tout est géré, je reçois mes reporting chaque mois et je me concentre sur ma programmation."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">MF</div>
+            <div><div class="testi-name">Malik Fontaine</div><div class="testi-role">Producteur · Label Océan Records</div></div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"La formule Premium avec l'option Mandat 360+ a changé ma façon de gérer mon festival. Toute l'enveloppe paie est pilotée par l'équipe, je n'ai plus à m'en inquiéter."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">JB</div>
+            <div><div class="testi-name">Julie Besoin</div><div class="testi-role">Directrice · Festival Kréol'Art</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ (ancre) -->
+  <section class="section section-gray">
+    <div style="max-width:1100px;margin:0 auto">
+      <div class="center">
+        <div class="label">Vos questions</div>
+        <h2 class="section-title">On répond à tout</h2>
+      </div>
+      <div class="faq-list" id="home-faq">
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Qui est l'employeur de mes intermittents ?</span><span class="faq-q-icon">+</span></div>
+          <div class="faq-a"><p>Vous restez l'employeur légal de vos intermittents. GI360 ne devient jamais employeur à votre place : nous gérons uniquement la partie administrative en votre nom, avec vos propres accès. Vous restez responsable et propriétaire de tous vos comptes.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Qu'est-ce qu'Intermittence360 prend en charge exactement ?</span><span class="faq-q-icon">+</span></div>
+          <div class="faq-a"><p>Rédaction des contrats, DPAE (déclaration préalable à l'embauche), émission des bulletins de paie, attestations France Travail (AEM), déclarations URSSAF, Congés Spectacles, Audiens. Tout ce qui concerne l'obligation employeur en matière sociale.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Puis-je rejoindre GI360 si j'ai déjà employé des intermittents ?</span><span class="faq-q-icon">+</span></div>
+          <div class="faq-a"><p>Oui ! GI360 est fait pour reprendre une activité en cours, vérifier la conformité de vos pratiques passées et assurer une transition fluide. Notre équipe s'occupe de la reprise de votre historique lors de l'onboarding.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Est-ce que GI360 est un logiciel ou une équipe humaine ?</span><span class="faq-q-icon">+</span></div>
+          <div class="faq-a"><p>GI360 c'est une équipe humaine ! Nous traitons vos démarches de façon personnalisée et vous conseillons individuellement — contrairement à un portail automatisé. Chaque client a un référent dédié qui connaît votre dossier.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Que se passe-t-il si je n'ai aucune paie à faire un mois ?</span><span class="faq-q-icon">+</span></div>
+          <div class="faq-a"><p>Votre abonnement maintient vos accès actifs, votre veille réglementaire et votre dossier à jour. Cela évite de tout recréer à chaque reprise d'activité et garantit votre réactivité en cas de projet imprévu.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Qu'est-ce que l'option Mandat 360+ ?</span><span class="faq-q-icon">+</span></div>
+          <div class="faq-a"><p>Disponible uniquement en formule Premium, cette option nous permet de gérer pour vous toute l'enveloppe annuelle dédiée aux paies. Nous répartissons le budget mois par mois selon les prestations réelles, du paiement net à l'artiste aux cotisations sociales. Tarif : 4% du budget annuel confié, minimum 500 € HT par intermittent.</p></div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:2.5rem">
+        <button class="btn btn-primary" onclick="showFunnel('Essentiel')">Devenir client Intermittence360 →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOG -->
+  <section class="section">
+    <div style="max-width:1100px;margin:0 auto">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem;margin-bottom:0">
+        <div>
+          <div class="label">Blog & Ressources</div>
+          <h2 class="section-title">Les questions les plus posées</h2>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="showPage('ressources')">Voir tous les articles</button>
+      </div>
+      <div class="blog-grid" style="margin-top:3rem">
+        <div class="blog-card">
+          <div class="blog-thumb">🎭</div>
+          <div class="blog-body">
+            <div class="blog-tag">Intermittence</div>
+            <div class="blog-title">Cachet ou contrat horaire : quelle différence pour votre artiste ?</div>
+            <div class="blog-excerpt">En tant qu'employeur, le choix entre cachet et contrat horaire impacte directement les cotisations et le calcul des droits de votre intermittent. Voici tout ce qu'il faut savoir avant de...</div>
+            <div class="blog-footer">
+              <span class="blog-date">15 juin 2025</span>
+              <button class="btn btn-sm" style="background:var(--accent-glow);color:var(--accent);border:none;cursor:pointer;border-radius:8px;padding:.4rem .9rem;font-size:.75rem;font-weight:600" onclick="showPage('ressources')">Lire l'article →</button>
+            </div>
+          </div>
+        </div>
+        <div class="blog-card">
+          <div class="blog-thumb">📋</div>
+          <div class="blog-body">
+            <div class="blog-tag">Réglementation</div>
+            <div class="blog-title">La licence d'entrepreneur du spectacle : obligatoire pour qui ?</div>
+            <div class="blog-excerpt">Toute structure qui produit, diffuse ou organise des spectacles vivants doit détenir une licence DRAC. Mais comment savoir si vous êtes concerné(e), et comment l'obtenir sans vous...</div>
+            <div class="blog-footer">
+              <span class="blog-date">3 mai 2025</span>
+              <button class="btn btn-sm" style="background:var(--accent-glow);color:var(--accent);border:none;cursor:pointer;border-radius:8px;padding:.4rem .9rem;font-size:.75rem;font-weight:600" onclick="showPage('ressources')">Lire l'article →</button>
+            </div>
+          </div>
+        </div>
+        <div class="blog-card">
+          <div class="blog-thumb">💰</div>
+          <div class="blog-body">
+            <div class="blog-tag">Budget & paie</div>
+            <div class="blog-title">Comment calculer le coût réel d'un intermittent pour votre structure ?</div>
+            <div class="blog-excerpt">Quand vous convenez d'un cachet avec un artiste, il faut impérativement intégrer les charges patronales dans votre budget. Beaucoup de structures se retrouvent à court de trésorerie parce que...</div>
+            <div class="blog-footer">
+              <span class="blog-date">18 avril 2025</span>
+              <button class="btn btn-sm" style="background:var(--accent-glow);color:var(--accent);border:none;cursor:pointer;border-radius:8px;padding:.4rem .9rem;font-size:.75rem;font-weight:600" onclick="showPage('ressources')">Lire l'article →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="section-sm" style="background:var(--off-white)">
+    <div class="newsletter">
+      <h2>Restez à jour sur l'intermittence</h2>
+      <p>Minimaux légaux, nouvelles conventions, veille URSSAF — recevez l'essentiel chaque mois, directement dans votre boîte.</p>
+      <div class="newsletter-form">
+        <input type="email" class="newsletter-input" placeholder="votre@email.fr">
+        <button class="btn btn-white" onclick="this.textContent='✓ Inscrit !'">S'inscrire</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="nav-logo" onclick="showPage('home')" style="display:inline-block;margin-bottom:.5rem">Intermittence<span>360</span></a>
+        <p>Gestion administrative pour employeurs du spectacle vivant et de l'industrie musicale. Basé à La Réunion, au service des structures culturelles.</p>
+        <div class="footer-contact">
+          <a href="tel:+262692752365">📞 +262 692 752 365</a>
+          <a href="mailto:gestionintermittent360@gmail.com">✉ gestionintermittent360@gmail.com</a>
+          <a>📍 Rés. des Cormorans, 20 rue des Sternes, 97434 Saint-Paul</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a onclick="showPage('processus')">La solution 360</a></li>
+          <li><a onclick="showPage('offres')">Nos offres</a></li>
+          <li><a onclick="showPage('simulateur')">Simulateur de paie</a></li>
+          <li><a onclick="showPage('demo')">Pourquoi GI360 ?</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Ressources</h4>
+        <ul>
+          <li><a onclick="showPage('ressources')">FAQ</a></li>
+          <li><a onclick="showPage('ressources')">Grilles des salaires</a></li>
+          <li><a onclick="showPage('ressources')">Blog</a></li>
+          <li><a href="https://code.travail.gouv.fr/outils/convention-collective/entreprise" target="_blank">Trouver mon IDCC</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Légal</h4>
+        <ul>
+          <li><a>CGU</a></li>
+          <li><a>Politique de confidentialité</a></li>
+          <li><a>Mentions légales</a></li>
+          <li><a>Cookies</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Intermittence360 (GI360) · Tous droits réservés</span>
+      <span>La Réunion · France</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE DEMO / POURQUOI ═══════════════════════════════════ -->
+<div id="page-demo" class="page">
+  <div class="demo-hero">
+    <div class="label" style="color:#93c5fd">Pourquoi Intermittence360 ?</div>
+    <h1>Voyez comment ça fonctionne</h1>
+    <p>En moins de 5 minutes, découvrez comment notre équipe prend en charge toute votre gestion employeur intermittente.</p>
+    <div class="video-frame" style="margin-bottom:.75rem">
+      <div style="text-align:center">
+        <div class="video-play" onclick="this.innerHTML='⏸'">▶</div>
+        <p style="color:rgba(255,255,255,.35);font-size:.8rem;margin-top:1rem">Vidéo de démonstration · 4 min 30</p>
+      </div>
+    </div>
+    <p class="video-label" style="text-align:center">Votre équipe dédiée vous présente le processus complet</p>
+  </div>
+  <div class="demo-features" style="padding:5rem 5vw">
+    <div style="max-width:1100px;margin:0 auto">
+      <div class="center">
+        <div class="label">Ce que vous gagnez</div>
+        <h2 class="section-title">Tout ce qu'Intermittence360 fait à votre place</h2>
+      </div>
+      <div class="demo-features-grid" style="margin-top:3rem">
+        <div class="demo-feat-card"><div class="demo-feat-icon">📝</div><h3>Rédaction des contrats</h3><p>Contrats d'engagement intermittents rédigés selon la convention collective applicable (CCNEAC, CCNCS, etc.) et transmis à l'artiste.</p></div>
+        <div class="demo-feat-card"><div class="demo-feat-icon">🏛️</div><h3>Déclarations sociales</h3><p>DPAE, URSSAF Spectacle (Limousin), Congés Spectacles, Audiens, France Travail — toutes les déclarations obligatoires traitées dans les délais.</p></div>
+        <div class="demo-feat-card"><div class="demo-feat-icon">💰</div><h3>Bulletins de paie</h3><p>Génération et envoi des fiches de paie conformes. Vos intermittents sont payés rapidement — pas de décalage d'un mois comme avec les logiciels automatisés.</p></div>
+        <div class="demo-feat-card"><div class="demo-feat-icon">📊</div><h3>Reporting mensuel</h3><p>Chaque mois, un récapitulatif complet : contrats émis, montants versés, charges, documents justificatifs — tout ce dont vous avez besoin.</p></div>
+        <div class="demo-feat-card"><div class="demo-feat-icon">🔐</div><h3>Écosystème employeur</h3><p>Création de tous vos comptes (Culture Pay, URSSAF, Audiens…) en votre nom. Vous restez propriétaire, nous y accédons comme gestionnaires délégués.</p></div>
+        <div class="demo-feat-card"><div class="demo-feat-icon">💬</div><h3>Référent dédié</h3><p>Un interlocuteur humain qui connaît votre dossier. Email prioritaire (et WhatsApp en Premium). Si vous recevez un courrier URSSAF, on le traite pour vous.</p></div>
+      </div>
+      <div class="demo-cta-bar" style="margin-top:3rem;background:var(--off-white);border-radius:var(--radius-lg);padding:3rem;border:1px solid var(--gray-100)">
+        <h2 style="font-size:1.7rem">Prêt à déléguer votre gestion ?</h2>
+        <p>Choisissez la formule qui correspond à votre activité et démarrez sous 24h.</p>
+        <div class="demo-cta-actions">
+          <button class="btn btn-primary btn-lg" onclick="showFunnel('Essentiel +')">Souscrire maintenant</button>
+          <button class="btn btn-outline btn-lg" onclick="showPage('offres')">Comparer les offres</button>
+          <button class="btn btn-secondary btn-lg" onclick="showPage('simulateur')">Simuler ma paie</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer style="background:var(--blue);padding:2.5rem 5vw;border-top:1px solid rgba(255,255,255,.06)">
+    <div class="footer-bottom" style="padding:0">
+      <span>© 2025 Intermittence360 · <a href="tel:+262692752365" style="color:rgba(255,255,255,.4)">+262 692 752 365</a></span>
+      <button class="btn btn-outline btn-sm" style="color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.15)" onclick="showPage('home')">← Retour à l'accueil</button>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE NOS CLIENTS ═══════════════════════════════════ -->
+<div id="page-clients" class="page">
+  <section class="clients-hero">
+    <div class="clients-hero-inner">
+      <div class="label">Nos clients</div>
+      <h1 class="section-title" style="font-size:clamp(2rem,4vw,3rem)">À qui s'adresse Intermittence360 ?</h1>
+      <p class="section-sub">Notre accompagnement s'adapte à chaque structure, à chaque rythme d'activité. Ce qui ne change pas : la qualité du suivi et le contact humain direct.</p>
+    </div>
+  </section>
+  <section class="section">
+    <div style="max-width:1000px;margin:0 auto">
+      <div class="label">Nos structures accompagnées</div>
+      <h2 class="section-title">Fait pour tous les employeurs du spectacle</h2>
+      <div class="clients-types-grid" style="margin-top:3rem">
+        <div class="ct-card">
+          <div class="ct-icon">🎵</div>
+          <div><div class="ct-title">Labels & producteurs musicaux</div><div class="ct-desc">Enregistrements, résidences, tournées, concerts — gérez les paies de vos artistes, musiciens et techniciens son en toute conformité avec la convention collective CCNEAC.</div><div class="ct-tags"><span class="tag">Studios</span><span class="tag">Tournées</span><span class="tag">Résidences</span></div></div>
+        </div>
+        <div class="ct-card">
+          <div class="ct-icon">🎭</div>
+          <div><div class="ct-title">Compagnies théâtre & danse</div><div class="ct-desc">Comédiens, danseurs, chorégraphes, metteurs en scène — vos contrats spécifiques à chaque convention, rédigés et déclarés par notre équipe.</div><div class="ct-tags"><span class="tag">CCNEAC</span><span class="tag">CCNCS</span><span class="tag">Spectacle vivant</span></div></div>
+        </div>
+        <div class="ct-card">
+          <div class="ct-icon">🎪</div>
+          <div><div class="ct-title">Festivals & événementiels</div><div class="ct-desc">Événements ponctuels avec de nombreux artistes et techniciens ? Nous gérons toute la masse de paies liée à votre festival, de la DPAE à la DSN.</div><div class="ct-tags"><span class="tag">Multi-artistes</span><span class="tag">Saisonnier</span><span class="tag">Techniciens</span></div></div>
+        </div>
+        <div class="ct-card">
+          <div class="ct-icon">🏛️</div>
+          <div><div class="ct-title">Associations culturelles</div><div class="ct-desc">Loi 1901, vous souhaitez employer des intermittents ? Nous créons votre écosystème employeur complet et obtenons votre licence d'entrepreneur du spectacle.</div><div class="ct-tags"><span class="tag">Loi 1901</span><span class="tag">Licence DRAC</span><span class="tag">Subventions</span></div></div>
+        </div>
+        <div class="ct-card">
+          <div class="ct-icon">🎬</div>
+          <div><div class="ct-title">Structures audiovisuelles</div><div class="ct-desc">Clips, films, documentaires, captations — techniciens audiovisuels, régisseurs, équipes de tournage selon la convention collective applicable.</div><div class="ct-tags"><span class="tag">Audiovisuel</span><span class="tag">Tournages</span><span class="tag">CCSSP</span></div></div>
+        </div>
+        <div class="ct-card">
+          <div class="ct-icon">🎙️</div>
+          <div><div class="ct-title">Salles de spectacle & diffuseurs</div><div class="ct-desc">Programmation régulière, accueil en résidence, concerts — votre gestion employeur toute l'année avec un référent qui connaît votre activité.</div><div class="ct-tags"><span class="tag">Programmation</span><span class="tag">Annuel</span><span class="tag">Résidences</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section section-gray">
+    <div style="max-width:800px;margin:0 auto;text-align:center">
+      <div class="label">Un accompagnement sur mesure</div>
+      <h2 class="section-title">Pas de traitement standard.<br>Chaque client est unique.</h2>
+      <p class="section-sub" style="margin:1rem auto 3rem">Dès votre inscription, un référent dédié analyse votre situation : type de structure, conventions collectives applicables, rythme d'activité, besoins spécifiques. Votre accompagnement est construit autour de votre réalité, pas d'un modèle générique.</p>
+      <div class="accomp-grid">
+        <div class="accomp-card"><div class="big-num">48h</div><p>Délai moyen d'activation de votre espace client</p></div>
+        <div class="accomp-card"><div class="big-num">100%</div><p>Des démarches administratives prises en charge</p></div>
+        <div class="accomp-card"><div class="big-num">1</div><p>Référent dédié qui connaît votre dossier</p></div>
+      </div>
+      <div style="margin-top:2.5rem">
+        <button class="btn btn-primary btn-lg" onclick="showFunnel('Essentiel +')">Rejoindre Intermittence360</button>
+      </div>
+    </div>
+  </section>
+  <footer style="background:var(--blue);padding:2.5rem 5vw;border-top:1px solid rgba(255,255,255,.06)">
+    <div class="footer-bottom" style="padding:0">
+      <span>© 2025 Intermittence360 · <a href="mailto:gestionintermittent360@gmail.com" style="color:rgba(255,255,255,.4)">gestionintermittent360@gmail.com</a></span>
+      <button class="btn btn-outline btn-sm" style="color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.15)" onclick="showPage('home')">← Retour à l'accueil</button>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE NOS OFFRES ═══════════════════════════════════ -->
+<div id="page-offres" class="page">
+  <section class="offers-hero">
+    <div style="max-width:680px">
+      <div class="label">Nos offres</div>
+      <h1 class="section-title" style="font-size:clamp(2rem,4vw,3rem)">Des formules pensées<br>pour votre activité</h1>
+      <p class="section-sub">Mensuel sans engagement ou annuel avec plus d'avantages — choisissez le rythme qui vous convient.</p>
+    </div>
+  </section>
+  <section class="section">
+    <div style="max-width:1100px;margin:0 auto">
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="plan-label">Pack mensuel · sans engagement</div>
+          <div class="plan-title">Essentiel</div>
+          <div class="plan-sub">Pour les structures qui démarrent ou ont une activité occasionnelle.</div>
+          <div class="plan-price"><span class="plan-curr">€</span><span class="plan-amount">40</span></div>
+          <div class="plan-period">HT / mois</div>
+          <div class="plan-entry">Frais d'entrée : 59 € HT</div>
+          <ul class="plan-features">
+            <li><span class="feat-check">✓</span> Coordination & suivi de vos paies intermittentes</li>
+            <li><span class="feat-check">✓</span> Vérification des données (montants, conventions)</li>
+            <li><span class="feat-check">✓</span> Reporting mensuel synthétique</li>
+            <li><span class="feat-check">✓</span> 3 contrats + 1 intermittent offerts</li>
+            <li><span class="feat-check">✓</span> Accès email dédié prioritaire</li>
+            <li><span class="feat-x">✕</span> <span>Bilan social / conseil intermittent</span></li>
+            <li><span class="feat-x">✕</span> <span>Option Mandat 360+</span></li>
+          </ul>
+          <div class="plan-extras" style="margin-bottom:1.5rem"><strong>Facturation supplémentaire</strong>17,90 € HT / contrat supplémentaire<br>15 € HT / intermittent supplémentaire<br>Option licence entrepreneur du spectacle : 150 € HT</div>
+          <button class="btn btn-outline btn-full" onclick="showFunnel('Essentiel')">Commencer avec Essentiel</button>
+        </div>
+        <div class="pricing-card featured">
+          <div class="featured-tag">⭐ Le plus populaire</div>
+          <div class="plan-label">Pack annuel · engagement 12 mois</div>
+          <div class="plan-title">Essentiel +</div>
+          <div class="plan-sub">Pour les structures qui gèrent des artistes tout au long de l'année.</div>
+          <div class="plan-price"><span class="plan-curr">€</span><span class="plan-amount">24</span></div>
+          <div class="plan-period">HT / mois · facturé 288 € HT / an</div>
+          <div class="plan-entry free">✓ Frais d'entrée OFFERTS</div>
+          <ul class="plan-features">
+            <li><span class="feat-check">✓</span> Coordination & suivi global à l'année</li>
+            <li><span class="feat-check">✓</span> Vérification & conseils sur les données</li>
+            <li><span class="feat-check">✓</span> Reporting annuel + rappels mensuels</li>
+            <li><span class="feat-check">✓</span> 3 contrats + 3 intermittents offerts</li>
+            <li><span class="feat-check">✓</span> 1 bilan social OU conseil intermittent inclus</li>
+            <li><span class="feat-x">✕</span> <span>Option Mandat 360+</span></li>
+          </ul>
+          <div class="plan-extras" style="margin-bottom:1.5rem"><strong>Facturation supplémentaire</strong>17,90 € HT / contrat supplémentaire<br>15 € HT / intermittent supplémentaire<br>Option licence entrepreneur du spectacle : 150 € HT</div>
+          <button class="btn btn-primary btn-full" onclick="showFunnel('Essentiel +')">Commencer avec Essentiel +</button>
+        </div>
+        <div class="pricing-card">
+          <div class="plan-label">Pack premium annuel · engagement 12 mois</div>
+          <div class="plan-title">360 Premium</div>
+          <div class="plan-sub">Pour les structures ambitieuses qui veulent une gestion complète.</div>
+          <div class="plan-price"><span class="plan-curr">€</span><span class="plan-amount">50</span></div>
+          <div class="plan-period">HT / mois · facturé 600 € HT / an</div>
+          <div class="plan-entry free">✓ Frais d'entrée OFFERTS</div>
+          <ul class="plan-features">
+            <li><span class="feat-check">✓</span> Coordination complète gestion intermittente</li>
+            <li><span class="feat-check">✓</span> Reporting mensuel ET annuel détaillé</li>
+            <li><span class="feat-check">✓</span> Référent dédié email + WhatsApp</li>
+            <li><span class="feat-check">✓</span> 3 contrats + 6 intermittents offerts</li>
+            <li><span class="feat-check">✓</span> 1 session conseil stratégie (40 min)</li>
+            <li><span class="feat-check">✓</span> Bilan social annuel ou trimestriel</li>
+            <li><span class="feat-check">✓</span> Bilan intermittence & subventions</li>
+            <li><span class="feat-check">✓</span> Sessions FAQ collectives pour artistes</li>
+            <li><span class="feat-check">✓</span> <strong>Option Mandat 360+ éligible</strong></li>
+          </ul>
+          <div class="plan-extras" style="margin-bottom:1.5rem"><strong>Facturation supplémentaire</strong>17,90 € HT / contrat supplémentaire<br>10 € HT / intermittent supplémentaire<br>Licence entrepreneur cat. 2 & 3 : 200 € HT</div>
+          <button class="btn btn-secondary btn-full" onclick="showFunnel('360 Premium')">Commencer avec Premium</button>
+        </div>
+      </div>
+      <!-- MANDAT 360+ -->
+      <div style="background:var(--blue);border-radius:var(--radius-lg);padding:2.5rem;margin-top:2.5rem;display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center">
+        <div>
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#60a5fa;margin-bottom:.75rem">Option exclusive 360 Premium</div>
+          <h3 style="font-size:1.3rem;font-weight:800;color:white;margin-bottom:.6rem">Mandat 360+</h3>
+          <p style="font-size:.875rem;color:rgba(255,255,255,.55);line-height:1.7;max-width:560px">Déléguez toute l'enveloppe annuelle de paie. Nous gérons la répartition mois par mois selon les prestations réellement effectuées. Tarif : 4% du budget annuel confié (minimum 500 € HT / intermittent / an).</p>
+        </div>
+        <button class="btn btn-white" onclick="showFunnel('360 Premium')">En savoir plus</button>
+      </div>
+      <!-- AVIS -->
+      <div style="margin-top:4rem">
+        <h2 class="section-title center">Ce que nos clients en pensent</h2>
+        <div class="testimonials-grid" style="margin-top:2.5rem">
+          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Formule Essentiel + depuis 8 mois — parfait pour notre rythme. L'équipe est réactive et les reportings mensuels nous permettent de rendre des comptes à notre conseil d'administration sans effort."</p><div class="testi-author"><div class="testi-avatar">KR</div><div><div class="testi-name">Karen Rivière</div><div class="testi-role">Présidente · Cie La Boîte à Clés</div></div></div></div>
+          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"La formule Premium avec Mandat 360+ est un game changer pour notre festival. Budget totalement maîtrisé, zéro stress sur les paies. On se concentre sur l'artistique, c'est ça l'essentiel."</p><div class="testi-author"><div class="testi-avatar">DT</div><div><div class="testi-name">Denis Théodore</div><div class="testi-role">Co-fondateur · Festival Zot La Scène</div></div></div></div>
+          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"J'ai commencé avec l'Essentiel pour tester et j'ai switché Premium au bout de 3 mois. La différence est énorme : un référent WhatsApp disponible, les bilans pour nos demandes de subventions… vraiment utile."</p><div class="testi-author"><div class="testi-avatar">AM</div><div><div class="testi-name">Aïssata Moussa</div><div class="testi-role">Directrice artistique · Collectif Archipel</div></div></div></div>
+        </div>
+        <div style="text-align:center;margin-top:2.5rem">
+          <button class="btn btn-primary btn-lg" onclick="showFunnel('Essentiel +')">Souscrire maintenant</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer style="background:var(--blue);padding:2.5rem 5vw;border-top:1px solid rgba(255,255,255,.06)">
+    <div class="footer-bottom" style="padding:0">
+      <span>© 2025 Intermittence360 · Questions ? <a href="tel:+262692752365" style="color:rgba(255,255,255,.4)">+262 692 752 365</a></span>
+      <button class="btn btn-outline btn-sm" style="color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.15)" onclick="showPage('home')">← Retour à l'accueil</button>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE PROCESSUS ═══════════════════════════════════ -->
+<div id="page-processus" class="page">
+  <section class="process-hero">
+    <div style="max-width:640px">
+      <div class="label" style="color:#93c5fd">La solution 360</div>
+      <h1 class="section-title" style="font-size:clamp(2rem,4vw,3rem);color:white">Du formulaire d'adhésion<br>à votre première paie.</h1>
+      <p class="section-sub">Voici exactement comment se déroule votre accompagnement, étape par étape.</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="process-timeline">
+      <div class="timeline-item">
+        <div class="timeline-num">0</div>
+        <div class="timeline-content">
+          <h3>Zoom de présentation offert (35 min)</h3>
+          <p>Avant de démarrer, une session Zoom gratuite pour vous présenter le fonctionnement de GI360, les bases du statut intermittent et le rôle de chacun dans le processus.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">1</div>
+        <div class="timeline-content">
+          <h3>Réception de votre formulaire d'adhésion</h3>
+          <p>Dès votre inscription, nous créons votre dossier client avec vos infos légales, coordonnées bancaires et volume estimé de paie.</p>
+          <ul><li>Informations légales de la structure</li><li>Documents types transmis</li><li>Analyse de vos besoins spécifiques</li></ul>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">2</div>
+        <div class="timeline-content">
+          <h3>Création de votre écosystème employeur</h3>
+          <p>Nous créons tous les comptes nécessaires en votre nom. Vous restez propriétaire — nous y accédons comme gestionnaires délégués.</p>
+          <ul><li>Compte Culture Pay</li><li>Compte URSSAF Spectacle (URSSAF Limousin)</li><li>Compte Congés Spectacles</li><li>Compte Audiens (santé / retraite)</li><li>Compte France Travail Spectacle</li><li>Si besoin : AFDAS et liaison DGFIP</li></ul>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">3</div>
+        <div class="timeline-content">
+          <h3>Signature du contrat de prestation</h3>
+          <p>Un contrat clair précisant nos missions, votre rôle, les tarifs et le fonctionnement mensuel. Une fois signé, la gestion active peut démarrer.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">4</div>
+        <div class="timeline-content">
+          <h3>Lancement opérationnel — votre 1ère paie</h3>
+          <p>Chaque mois : vous transmettez les infos (noms, dates, cachets), on s'occupe du reste.</p>
+          <ul><li>Rédaction des contrats d'engagement</li><li>DPAE (déclaration préalable à l'embauche)</li><li>Émission des bulletins de paie</li><li>AEM (attestation mensuelle France Travail)</li><li>Déclarations URSSAF / Congés / Audiens</li><li>Envoi des bordereaux</li></ul>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">5</div>
+        <div class="timeline-content">
+          <h3>Suivi continu & courriers</h3>
+          <p>Un référent dédié répond à vos questions. Si vous recevez un courrier postal (URSSAF, France Travail, Audiens), transmettez-le à votre adresse de gestion dédiée — on le traite directement.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">6</div>
+        <div class="timeline-content">
+          <h3>Clôture de mission & bilan annuel</h3>
+          <p>Récapitulatif annuel complet, justificatifs pour vos demandes de subventions, transmission des documents à conserver. Vous vous concentrez sur l'artistique — on gère l'administratif.</p>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:3rem">
+      <button class="btn btn-primary btn-lg" onclick="showFunnel('Essentiel +')">Démarrer mon accompagnement →</button>
+    </div>
+  </section>
+  <footer style="background:var(--blue);padding:2.5rem 5vw;border-top:1px solid rgba(255,255,255,.06)">
+    <div class="footer-bottom" style="padding:0">
+      <span>© 2025 Intermittence360</span>
+      <button class="btn btn-outline btn-sm" style="color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.15)" onclick="showPage('home')">← Retour à l'accueil</button>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE SIMULATEUR ═══════════════════════════════════ -->
+<div id="page-simulateur" class="page">
+  <section style="padding:9rem 5vw 5rem;background:var(--off-white)">
+    <div style="max-width:700px">
+      <div class="label">Simulateur</div>
+      <h1 class="section-title" style="font-size:clamp(2rem,4vw,3rem)">Calculez le coût réel<br>de vos paies intermittentes</h1>
+      <p class="section-sub">Estimez le coût total employeur, les charges sociales et le net à payer à votre intermittent. Les résultats sont indicatifs — contactez-nous pour un devis précis.</p>
+    </div>
+  </section>
+  <section class="section" style="padding-top:3rem">
+    <div class="sim-container">
+      <div class="sim-card">
+        <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:1.5rem;color:var(--blue)">Paramètres de la paie</h3>
+        <div class="sim-grid">
+          <div class="form-group">
+            <label class="form-label">Montant net souhaité (€)</label>
+            <input type="number" class="form-input" id="sim-net" placeholder="ex : 500" min="0" oninput="calcSim()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Type de contrat</label>
+            <select class="form-select" id="sim-type" onchange="calcSim()">
+              <option value="cachet">Cachet (artiste)</option>
+              <option value="horaire">Contrat horaire (technicien)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nombre de cachets / jours</label>
+            <input type="number" class="form-input" id="sim-jours" placeholder="ex : 3" min="1" oninput="calcSim()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Convention collective</label>
+            <select class="form-select" id="sim-conv" onchange="calcSim()">
+              <option value="ccneac">CCNEAC (entreprises artistiques)</option>
+              <option value="ccncs">CCNCS (centres sociaux culturels)</option>
+              <option value="ccnsp">CCNSP (spectacle privé)</option>
+            </select>
+          </div>
+        </div>
+        <div class="sim-result" id="sim-result">
+          <h3>Estimation pour votre intermittent</h3>
+          <div class="sim-result-grid">
+            <div class="sim-result-item"><div class="sim-result-val" id="res-net">—</div><div class="sim-result-label">Net à payer à l'artiste</div></div>
+            <div class="sim-result-item"><div class="sim-result-val" id="res-brut">—</div><div class="sim-result-label">Brut chargé employeur</div></div>
+            <div class="sim-result-item"><div class="sim-result-val" id="res-charges">—</div><div class="sim-result-label">Charges patronales</div></div>
+          </div>
+          <p class="sim-note">⚠ Simulation indicative. Les montants réels varient selon la situation précise de l'intermittent et le barème légal en vigueur. Contactez-nous pour un calcul exact.</p>
+        </div>
+        <div style="margin-top:1.5rem;text-align:center">
+          <button class="btn btn-primary" onclick="showFunnel('Essentiel')">Me faire accompagner pour ces paies →</button>
+        </div>
+      </div>
+      <div style="background:var(--accent-glow);border:1px solid rgba(37,99,235,.2);border-radius:12px;padding:1.5rem;margin-top:1.5rem">
+        <strong style="font-size:.85rem;color:var(--accent)">💡 Bon à savoir :</strong>
+        <p style="font-size:.83rem;color:var(--gray-700);margin-top:.4rem;line-height:1.65">Quand vous convenez d'un montant de cachet avec un artiste, vous devez prendre en compte les charges patronales qui s'ajoutent au net. Pour un net de 500 €, comptez environ 900-950 € de coût total employeur.</p>
+      </div>
+    </div>
+  </section>
+  <footer style="background:var(--blue);padding:2.5rem 5vw;border-top:1px solid rgba(255,255,255,.06)">
+    <div class="footer-bottom" style="padding:0">
+      <span>© 2025 Intermittence360</span>
+      <button class="btn btn-outline btn-sm" style="color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.15)" onclick="showPage('home')">← Retour à l'accueil</button>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE RESSOURCES ═══════════════════════════════════ -->
+<div id="page-ressources" class="page">
+  <section style="padding:9rem 5vw 4rem;background:var(--off-white)">
+    <div style="max-width:720px">
+      <div class="label">Ressources</div>
+      <h1 class="section-title" style="font-size:clamp(2rem,4vw,3rem)">Tout ce qu'il faut savoir<br>sur l'intermittence</h1>
+      <p class="section-sub">FAQ complète, grilles des salaires minimaux et articles de blog pour mieux comprendre vos obligations d'employeur.</p>
+    </div>
+  </section>
+  <section class="section" style="padding-top:3rem">
+    <div style="max-width:1100px;margin:0 auto">
+      <div class="resources-tabs">
+        <button class="res-tab active" onclick="switchResTab('faq', this)">FAQ</button>
+        <button class="res-tab" onclick="switchResTab('grilles', this)">Grilles des salaires</button>
+        <button class="res-tab" onclick="switchResTab('blog', this)">Blog</button>
+      </div>
+      <!-- FAQ -->
+      <div class="resources-panel active" id="res-faq">
+        <div class="faq-list" style="max-width:100%">
+          <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Qui est l'employeur des intermittents ?</span><span class="faq-q-icon">+</span></div><div class="faq-a"><p>Vous restez l'employeur légal. GI360 gère uniquement la partie administrative en votre nom, avec vos propres accès. Vous restez propriétaire de tous les comptes et responsable de vos équipes.</p></div></div>
+          <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Qu'est-ce que le portage salarial ? Est-ce ce que fait GI360 ?</span><span class="faq-q-icon">+</span></div><div class="faq-a"><p>Non. Le portage salarial est interdit dans le spectacle : la structure productrice doit être l'employeur. GI360 est un mandataire administratif — vous restez l'employeur, nous gérons vos démarches.</p></div></div>
+          <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Qu'est-ce que la licence d'entrepreneur du spectacle ?</span><span class="faq-q-icon">+</span></div><div class="faq-a"><p>C'est une autorisation délivrée par la DRAC, obligatoire pour toute structure qui produit, diffuse ou organise des spectacles vivants. Sans cette licence, il est interdit de salarier des intermittents. GI360 peut vous aider à l'obtenir (option disponible dans toutes les formules).</p></div></div>
+          <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Quelle est la différence entre cachet et contrat horaire ?</span><span class="faq-q-icon">+</span></div><div class="faq-a"><p>Le cachet est forfaitaire et correspond à une prestation artistique (concert, représentation…). Le contrat horaire est basé sur un taux horaire multiplié par le nombre d'heures travaillées, plutôt pour les techniciens. Le choix impacte les cotisations et les droits à l'indemnisation de l'intermittent.</p></div></div>
+          <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">En cas de contrôle URSSAF, que fait GI360 ?</span><span class="faq-q-icon">+</span></div><div class="faq-a"><p>Nous vous aidons à réunir les pièces justificatives et à répondre aux organismes de contrôle. Vous restez employeur responsable, mais nous vous épaulons de bout en bout pour éviter toute erreur.</p></div></div>
+          <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Qu'est-ce qu'un bilan social ?</span><span class="faq-q-icon">+</span></div><div class="faq-a"><p>Un document regroupant l'ensemble des informations liées à vos salariés du spectacle sur une période (nombre de contrats, montants versés, charges payées, liste des déclarations). Essentiel pour démontrer le respect de vos obligations aux financeurs et à l'URSSAF.</p></div></div>
+          <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Pourquoi GI360 ne paye pas directement mes intermittents ?</span><span class="faq-q-icon">+</span></div><div class="faq-a"><p>Parce que vous êtes l'employeur. De plus, nous avons choisi ce fonctionnement car il est plus juste : la plupart des logiciels paient avec un mois de décalage, alors qu'un intermittent dont les jours sont déduits de ses allocations doit être payé rapidement. Sauf si vous optez pour le Mandat 360+ où nous répartissons votre enveloppe en votre nom.</p></div></div>
+          <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Quelles garanties de confidentialité ?</span><span class="faq-q-icon">+</span></div><div class="faq-a"><p>Toutes vos données sont hébergées en France, protégées et utilisées exclusivement pour votre gestion administrative. Aucune exploitation commerciale n'est faite de vos informations.</p></div></div>
+        </div>
+      </div>
+      <!-- GRILLES -->
+      <div class="resources-panel" id="res-grilles">
+        <p style="font-size:.875rem;color:var(--gray-500);margin-bottom:2rem">Minima légaux applicables aux intermittents du spectacle — dernière mise à jour : janvier 2025. Ces montants sont des minimaux : vous pouvez rémunérer au-delà.</p>
+        <div style="overflow-x:auto">
+          <table class="salary-table">
+            <thead><tr><th>Convention</th><th>Catégorie</th><th>Cachet minimum brut</th><th>Taux horaire minimum</th></tr></thead>
+            <tbody>
+              <tr><td>CCNEAC</td><td>Artiste de complément</td><td>—</td><td>13,52 €</td></tr>
+              <tr><td>CCNEAC</td><td>Artiste soliste</td><td>115 €</td><td>—</td></tr>
+              <tr><td>CCNEAC</td><td>Musicien soliste (concert)</td><td>128 €</td><td>—</td></tr>
+              <tr><td>CCNEAC</td><td>Technicien niveau 1</td><td>—</td><td>12,80 €</td></tr>
+              <tr><td>CCNEAC</td><td>Technicien niveau 2</td><td>—</td><td>13,90 €</td></tr>
+              <tr><td>CCNEAC</td><td>Technicien cadre</td><td>—</td><td>16,20 €</td></tr>
+              <tr><td>CCNCS</td><td>Artiste (animation)</td><td>—</td><td>12,90 €</td></tr>
+              <tr><td>CCNSP</td><td>Artiste variétés</td><td>98 €</td><td>—</td></tr>
+              <tr><td>CCNSP</td><td>Musicien jazz / variétés</td><td>108 €</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="background:var(--accent-glow);border:1px solid rgba(37,99,235,.2);border-radius:12px;padding:1.25rem;margin-top:1.5rem">
+          <p style="font-size:.83rem;color:var(--gray-700)">💡 Pour trouver votre code IDCC et identifier la convention collective applicable à votre structure : <a href="https://code.travail.gouv.fr/outils/convention-collective/entreprise" target="_blank" style="color:var(--accent);font-weight:600">code.travail.gouv.fr →</a></p>
+        </div>
+      </div>
+      <!-- BLOG -->
+      <div class="resources-panel" id="res-blog">
+        <div class="blog-grid">
+          <div class="blog-card"><div class="blog-thumb">🎭</div><div class="blog-body"><div class="blog-tag">Intermittence</div><div class="blog-title">Cachet ou contrat horaire : quelle différence pour votre artiste ?</div><div class="blog-excerpt">En tant qu'employeur, le choix entre cachet et contrat horaire impacte directement les cotisations et le calcul des droits de votre intermittent. Voici tout ce qu'il faut savoir avant de rédiger votre premier contrat.</div><div class="blog-footer"><span class="blog-date">15 juin 2025</span><button class="btn btn-sm" style="background:var(--accent-glow);color:var(--accent);border:none;cursor:pointer;border-radius:8px;padding:.4rem .9rem;font-size:.75rem;font-weight:600">Lire l'article →</button></div></div></div>
+          <div class="blog-card"><div class="blog-thumb">📋</div><div class="blog-body"><div class="blog-tag">Réglementation</div><div class="blog-title">La licence d'entrepreneur du spectacle : obligatoire pour qui ?</div><div class="blog-excerpt">Toute structure qui produit, diffuse ou organise des spectacles vivants doit détenir une licence DRAC. Mais comment savoir si vous êtes concerné(e), et comment l'obtenir sans vous noyer dans la paperasse ?</div><div class="blog-footer"><span class="blog-date">3 mai 2025</span><button class="btn btn-sm" style="background:var(--accent-glow);color:var(--accent);border:none;cursor:pointer;border-radius:8px;padding:.4rem .9rem;font-size:.75rem;font-weight:600">Lire l'article →</button></div></div></div>
+          <div class="blog-card"><div class="blog-thumb">💰</div><div class="blog-body"><div class="blog-tag">Budget & paie</div><div class="blog-title">Comment calculer le coût réel d'un intermittent pour votre structure ?</div><div class="blog-excerpt">Quand vous convenez d'un cachet, vous devez intégrer les charges patronales dans votre budget. Beaucoup de structures se retrouvent à court de trésorerie parce qu'elles oublient ce calcul essentiel.</div><div class="blog-footer"><span class="blog-date">18 avril 2025</span><button class="btn btn-sm" style="background:var(--accent-glow);color:var(--accent);border:none;cursor:pointer;border-radius:8px;padding:.4rem .9rem;font-size:.75rem;font-weight:600">Lire l'article →</button></div></div></div>
+          <div class="blog-card"><div class="blog-thumb">🏛️</div><div class="blog-body"><div class="blog-tag">Organismes</div><div class="blog-title">URSSAF, Audiens, Congés Spectacles : qui fait quoi pour vos intermittents ?</div><div class="blog-excerpt">En tant qu'employeur du spectacle, vous devez cotiser auprès de plusieurs organismes. Mais lequel gère quoi exactement ? Ce guide pratique vous explique le rôle de chacun pour éviter les oublis de déclaration.</div><div class="blog-footer"><span class="blog-date">2 mars 2025</span><button class="btn btn-sm" style="background:var(--accent-glow);color:var(--accent);border:none;cursor:pointer;border-radius:8px;padding:.4rem .9rem;font-size:.75rem;font-weight:600">Lire l'article →</button></div></div></div>
+          <div class="blog-card"><div class="blog-thumb">📊</div><div class="blog-body"><div class="blog-tag">Subventions</div><div class="blog-title">Comment utiliser votre bilan social pour décrocher des subventions culturelles ?</div><div class="blog-excerpt">Les organismes financeurs (DRAC, collectivités, CNM) demandent des preuves de vos obligations sociales. Voici comment préparer votre dossier de subvention avec les bons documents issus de votre gestion paie.</div><div class="blog-footer"><span class="blog-date">14 janvier 2025</span><button class="btn btn-sm" style="background:var(--accent-glow);color:var(--accent);border:none;cursor:pointer;border-radius:8px;padding:.4rem .9rem;font-size:.75rem;font-weight:600">Lire l'article →</button></div></div></div>
+          <div class="blog-card"><div class="blog-thumb">✅</div><div class="blog-body"><div class="blog-tag">Démarrage</div><div class="blog-title">Première fois employeur d'intermittents ? Les 5 erreurs à éviter absolument</div><div class="blog-excerpt">DPAE oubliée, mauvaise convention, cachet sous le minimum légal… les erreurs de débutant coûtent cher. Avant votre première paie, lisez ce guide pour partir sur des bases solides et conformes.</div><div class="blog-footer"><span class="blog-date">5 janvier 2025</span><button class="btn btn-sm" style="background:var(--accent-glow);color:var(--accent);border:none;cursor:pointer;border-radius:8px;padding:.4rem .9rem;font-size:.75rem;font-weight:600">Lire l'article →</button></div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer style="background:var(--blue);padding:2.5rem 5vw;border-top:1px solid rgba(255,255,255,.06)">
+    <div class="footer-bottom" style="padding:0">
+      <span>© 2025 Intermittence360</span>
+      <button class="btn btn-outline btn-sm" style="color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.15)" onclick="showPage('home')">← Retour à l'accueil</button>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════ FUNNEL D'INSCRIPTION ═══════════════════════════════════ -->
+<div id="page-funnel" class="page">
+
+  <!-- STEP 1 : Récap offre + CTA -->
+  <div class="funnel-page active" id="funnel-step-1">
+    <div class="funnel-wrap">
+      <div class="funnel-card">
+        <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
+        <div class="funnel-step-label">Étape 1 sur 4</div>
+        <h2>Votre formule choisie</h2>
+        <p>Vérifiez le récapitulatif de votre offre avant de créer votre espace client.</p>
+        <div class="plan-recap">
+          <div class="plan-recap-name" id="recap-name">Pack Essentiel +</div>
+          <div class="plan-recap-price" id="recap-price">24 € HT / mois</div>
+          <div class="plan-recap-features" id="recap-features">✓ Coordination & suivi annuel · ✓ 3 contrats + 3 intermittents offerts · ✓ Frais d'entrée offerts · ✓ 1 bilan social ou conseil inclus</div>
+        </div>
+        <p style="font-size:.8rem;color:var(--gray-500);margin-bottom:1.5rem">Cette formule est idéale pour les structures culturelles avec une activité régulière tout au long de l'année.</p>
+        <button class="btn btn-primary btn-full" onclick="goFunnel(2)">Souscrire à cette offre →</button>
+        <div style="text-align:center;margin-top:1rem">
+          <button style="background:none;border:none;font-size:.8rem;color:var(--gray-500);cursor:pointer" onclick="showPage('offres')">Choisir une autre formule</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 : Création de compte -->
+  <div class="funnel-page" id="funnel-step-2">
+    <div class="funnel-wrap">
+      <div class="funnel-card">
+        <div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div>
+        <div class="funnel-step-label">Étape 2 sur 4</div>
+        <h2>Créer mon espace client</h2>
+        <p>Ces identifiants vous permettront de vous connecter à votre tableau de bord Intermittence360.</p>
+        <div class="form-row-2">
+          <div class="form-group-v"><label class="form-label">Prénom *</label><input type="text" class="form-input" placeholder="Marie"></div>
+          <div class="form-group-v"><label class="form-label">Nom *</label><input type="text" class="form-input" placeholder="Dupont"></div>
+        </div>
+        <div class="form-group-v"><label class="form-label">Email professionnel *</label><input type="email" class="form-input" placeholder="marie@mastructure.fr"></div>
+        <div class="form-group-v"><label class="form-label">Mot de passe *</label><input type="password" class="form-input" placeholder="Minimum 8 caractères"></div>
+        <div class="form-group-v"><label class="form-label">Confirmer le mot de passe *</label><input type="password" class="form-input" placeholder="Répétez votre mot de passe"></div>
+        <button class="btn btn-primary btn-full" style="margin-top:.5rem" onclick="goFunnel(2.5)">Continuer →</button>
+        <p style="text-align:center;font-size:.75rem;color:var(--gray-300);margin-top:1rem">En continuant, vous acceptez nos <a href="#" style="color:var(--accent)">CGU</a> et notre <a href="#" style="color:var(--accent)">politique de confidentialité</a>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2.5 : Validation email (simulée) -->
+  <div class="funnel-page" id="funnel-step-25">
+    <div class="funnel-wrap">
+      <div class="funnel-card" style="text-align:center">
+        <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+        <div style="font-size:3rem;margin-bottom:1.5rem">📬</div>
+        <h2>Vérifiez votre email</h2>
+        <p style="margin-bottom:2rem">Nous venons de vous envoyer un lien de validation à votre adresse. Cliquez sur le lien pour activer votre compte et accéder à votre espace.</p>
+        <div style="background:var(--off-white);border-radius:10px;padding:1.25rem;margin-bottom:2rem;font-size:.83rem;color:var(--gray-500)">
+          Vous n'avez pas reçu l'email ? Vérifiez vos spams ou
+          <button style="background:none;border:none;color:var(--accent);font-size:.83rem;cursor:pointer;font-weight:600;font-family:inherit">renvoyer le lien</button>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="goFunnel(3)">J'ai validé mon email →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 : Paiement -->
+  <div class="funnel-page" id="funnel-step-3">
+    <div class="funnel-wrap">
+      <div class="funnel-card">
+        <div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div>
+        <div class="funnel-step-label">Étape 3 sur 4 · Paiement</div>
+        <h2>Finalisez votre souscription</h2>
+        <p>Votre espace sera activé dès validation de votre paiement.</p>
+        <div class="plan-recap" style="margin-bottom:1.5rem">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><div class="plan-recap-name" id="recap-name-pay">Pack Essentiel +</div><div style="font-size:.78rem;color:var(--gray-500);margin-top:.2rem">Abonnement annuel</div></div>
+            <div class="plan-recap-price" id="recap-price-pay">288 € HT</div>
+          </div>
+        </div>
+        <div class="stripe-mock">
+          <div class="stripe-label">Numéro de carte</div>
+          <input type="text" class="card-input-mock" placeholder="1234 5678 9012 3456" style="width:100%;margin-bottom:.75rem">
+          <div class="stripe-card-row">
+            <div style="flex:1"><div class="stripe-label">Expiration</div><input type="text" class="card-input-mock" placeholder="MM / AA"></div>
+            <div style="flex:1"><div class="stripe-label">CVC</div><input type="text" class="card-input-mock" placeholder="123"></div>
+          </div>
+          <div class="stripe-badge"><span>Paiement sécurisé par</span><span class="stripe-logo">stripe</span></div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="goFunnel(4)">Valider le paiement →</button>
+        <div style="display:flex;justify-content:center;gap:1rem;margin-top:1rem">
+          <span style="font-size:.73rem;color:var(--gray-300)">🔒 SSL · 256-bit</span>
+          <span style="font-size:.73rem;color:var(--gray-300)">Aucun prélèvement surprise</span>
+          <span style="font-size:.73rem;color:var(--gray-300)">Annulable à tout moment</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 : Formulaire infos structure (post-paiement) -->
+  <div class="funnel-page" id="funnel-step-4">
+    <div class="funnel-wrap" style="align-items:flex-start;padding-top:6rem">
+      <div class="funnel-card" style="max-width:600px">
+        <div class="progress-bar"><div class="progress-fill" style="width:90%"></div></div>
+        <div style="font-size:2rem;text-align:center;margin-bottom:.75rem">🎉</div>
+        <div class="funnel-step-label" style="text-align:center">Paiement validé · Étape 4 sur 4</div>
+        <h2 style="text-align:center">Parlez-nous de votre structure</h2>
+        <p>Ces informations permettent à notre équipe de créer votre fiche client et de démarrer votre accompagnement sous 24h.</p>
+        <div class="form-row-2">
+          <div class="form-group-v"><label class="form-label">Nom de la structure *</label><input type="text" class="form-input" placeholder="Association Les Arts du Sud"></div>
+          <div class="form-group-v"><label class="form-label">Type de structure *</label><select class="form-select"><option>Association loi 1901</option><option>Entreprise / SARL / SAS</option><option>Collectivité publique</option><option>Label / Producteur</option><option>Festival</option><option>Autre</option></select></div>
+        </div>
+        <div class="form-group-v"><label class="form-label">SIRET / N° RNA *</label><input type="text" class="form-input" placeholder="123 456 789 00010"></div>
+        <div class="form-row-2">
+          <div class="form-group-v"><label class="form-label">Téléphone *</label><input type="tel" class="form-input" placeholder="+262 692 00 00 00"></div>
+          <div class="form-group-v"><label class="form-label">Département / Région *</label><select class="form-select"><option>La Réunion (974)</option><option>Île-de-France</option><option>PACA</option><option>Occitanie</option><option>Autre</option></select></div>
+        </div>
+        <div class="form-group-v"><label class="form-label">Avez-vous déjà une licence d'entrepreneur du spectacle ?</label><select class="form-select"><option>Non, j'en ai besoin</option><option>Oui, catégorie 1</option><option>Oui, catégorie 2 & 3</option><option>En cours d'obtention</option></select></div>
+        <div class="form-group-v"><label class="form-label">Volume mensuel estimé d'intermittents</label><select class="form-select"><option>1 à 3 intermittents</option><option>4 à 10 intermittents</option><option>11 à 20 intermittents</option><option>Plus de 20</option></select></div>
+        <div class="form-group-v"><label class="form-label">Message ou informations complémentaires</label><input type="text" class="form-input" placeholder="Dites-nous tout ce qui peut nous aider à bien démarrer ensemble…"></div>
+        <button class="btn btn-primary btn-full" style="margin-top:.5rem" onclick="goFunnel(5)">Envoyer mon dossier →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 : Confirmation finale -->
+  <div class="funnel-page" id="funnel-step-5">
+    <div class="funnel-wrap">
+      <div class="funnel-card" style="text-align:center">
+        <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+        <div class="success-icon">✅</div>
+        <div class="success-title">Bienvenue chez Intermittence360 !</div>
+        <p class="success-sub">Votre dossier est entre les mains de notre équipe. Vous serez contacté(e) sous <strong>24h ouvrées</strong> par votre référent dédié pour démarrer votre accompagnement.</p>
+        <div style="background:var(--off-white);border-radius:12px;padding:1.5rem;margin:1.5rem 0;text-align:left">
+          <p style="font-size:.82rem;font-weight:700;color:var(--blue);margin-bottom:.75rem">La suite de votre onboarding :</p>
+          <div style="display:flex;flex-direction:column;gap:.5rem">
+            <div style="display:flex;gap:.75rem;font-size:.82rem;color:var(--gray-700)"><span style="color:var(--accent);font-weight:700">✓</span> Zoom de présentation offert (35 min)</div>
+            <div style="display:flex;gap:.75rem;font-size:.82rem;color:var(--gray-700)"><span style="color:var(--accent);font-weight:700">✓</span> Création de votre écosystème employeur</div>
+            <div style="display:flex;gap:.75rem;font-size:.82rem;color:var(--gray-700)"><span style="color:var(--accent);font-weight:700">✓</span> Signature du contrat de prestation</div>
+            <div style="display:flex;gap:.75rem;font-size:.82rem;color:var(--gray-700)"><span style="color:var(--accent);font-weight:700">✓</span> Première paie opérationnelle</div>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="showPage('home')">Retour à l'accueil</button>
+        <p style="font-size:.78rem;color:var(--gray-300);margin-top:1rem">Des questions ? <a href="mailto:gestionintermittent360@gmail.com" style="color:var(--accent)">gestionintermittent360@gmail.com</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCROLL TOP -->
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<script>
+// ── PAGE ROUTER ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) { page.classList.add('active'); window.scrollTo(0,0); }
+}
+
+// ── FUNNEL ──
+const planData = {
+  'Essentiel': { name:'Pack Essentiel', price:'40 € HT / mois', payPrice:'480 € HT / an + 59 € frais entrée', features:'✓ Coordination & suivi des paies · ✓ 3 contrats + 1 intermittent offerts · ✓ Reporting mensuel · ✓ Email dédié' },
+  'Essentiel +': { name:'Pack Essentiel +', price:'24 € HT / mois', payPrice:'288 € HT / an', features:'✓ Coordination & suivi annuel · ✓ 3 contrats + 3 intermittents offerts · ✓ Frais d\'entrée offerts · ✓ 1 bilan social ou conseil inclus' },
+  '360 Premium': { name:'Pack 360 Premium', price:'50 € HT / mois', payPrice:'600 € HT / an', features:'✓ Coordination complète · ✓ 3 contrats + 6 intermittents offerts · ✓ Référent WhatsApp · ✓ Bilan social + subventions · ✓ Mandat 360+ éligible' }
+};
+
+let currentPlan = 'Essentiel +';
+
+function showFunnel(plan) {
+  currentPlan = plan || 'Essentiel +';
+  const d = planData[currentPlan] || planData['Essentiel +'];
+  document.getElementById('recap-name').textContent = d.name;
+  document.getElementById('recap-price').textContent = d.price;
+  document.getElementById('recap-features').textContent = d.features;
+  document.getElementById('recap-name-pay').textContent = d.name;
+  document.getElementById('recap-price-pay').textContent = d.payPrice;
+  // reset to step 1
+  document.querySelectorAll('.funnel-page').forEach(p => p.classList.remove('active'));
+  document.getElementById('funnel-step-1').classList.add('active');
+  showPage('funnel');
+}
+
+function goFunnel(step) {
+  document.querySelectorAll('.funnel-page').forEach(p => p.classList.remove('active'));
+  const id = step === 2.5 ? 'funnel-step-25' : 'funnel-step-' + step;
+  const el = document.getElementById(id);
+  if (el) { el.classList.add('active'); window.scrollTo(0,0); }
+}
+
+// ── FAQ TOGGLE ──
+function toggleFaq(btn) {
+  btn.parentElement.classList.toggle('open');
+}
+
+// ── RESOURCES TABS ──
+function switchResTab(tab, btn) {
+  document.querySelectorAll('.res-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.resources-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('res-' + tab).classList.add('active');
+}
+
+// ── SIMULATEUR ──
+function calcSim() {
+  const net = parseFloat(document.getElementById('sim-net').value) || 0;
+  const jours = parseInt(document.getElementById('sim-jours').value) || 1;
+  const type = document.getElementById('sim-type').value;
+  if (net <= 0) { document.getElementById('sim-result').classList.remove('show'); return; }
+  const totalNet = net * jours;
+  // Approximate multipliers
+  const brutCoeff = type === 'cachet' ? 1.22 : 1.25;
+  const empCoeff = type === 'cachet' ? 1.82 : 1.85;
+  const brut = Math.round(totalNet * brutCoeff);
+  const total = Math.round(totalNet * empCoeff);
+  const charges = total - brut;
+  document.getElementById('res-net').textContent = totalNet.toFixed(0) + ' €';
+  document.getElementById('res-brut').textContent = total.toFixed(0) + ' €';
+  document.getElementById('res-charges').textContent = charges.toFixed(0) + ' €';
+  document.getElementById('sim-result').classList.add('show');
+}
+
+// ── SCROLL TOP ──
+window.addEventListener('scroll', () => {
+  document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 400);
+});
+</script>
+</body>
+</html>

@@ -1014,11 +1014,11 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
 
 // ── EMBAUCHE DETAIL ──
 const embauches = {
-  e1: {name:'Marc Leblanc', projet:'Concert Kaz'Arts', periode:'15 – 17 mars 2026', statut:'Traité', locked: true},
+  e1: {name:'Marc Leblanc', projet:'Concert KazArts', periode:'15 – 17 mars 2026', statut:'Traité', locked: true},
   e2: {name:'Sophie Armand', projet:'Festival du Sud', periode:'20 – 22 mars 2026', statut:'En cours', locked: false},
   e3: {name:'Julien Torres', projet:'Résidence Théâtre', periode:'25 mars 2026', statut:'À compléter', locked: false},
   e4: {name:'Amina Saidou', projet:'Atelier Danse', periode:'10 mars 2026', statut:'Traité', locked: true},
-  e5: {name:'Kevin Payet', projet:'Concert Kaz\'Arts', periode:'15 – 17 mars 2026', statut:'En cours', locked: false},
+  e5: {name:'Kevin Payet', projet:'Concert KazArts', periode:'15 – 17 mars 2026', statut:'En cours', locked: false},
 };
 
 function openEmbauche(id) {
@@ -1026,7 +1026,7 @@ function openEmbauche(id) {
   const locked = e.locked;
   const badgeClass = e.statut === 'Traité' ? 'badge-green' : e.statut === 'En cours' ? 'badge-blue' : 'badge-orange';
   const notifs = {
-    e1:[['✓ Contrat signé','18/03/2026','green'],['✓ DPAE transmise','18/03/2026','green'],['✓ Fiche de paie éditée','22/03/2026','green'],['✓ AEM envoyée à l'intermittent','26/03/2026','green'],['✓ Certificat Congés Spectacles envoyé','26/03/2026','green']],
+    e1:[['✓ Contrat signé','18/03/2026','green'],['✓ DPAE transmise','18/03/2026','green'],['✓ Fiche de paie éditée','22/03/2026','green'],['✓ AEM envoyée à l\'intermittent','26/03/2026','green'],['✓ Certificat Congés Spectacles envoyé','26/03/2026','green']],
     e2:[['✓ Contrat créé','20/03/2026','green'],['✓ DPAE transmise','20/03/2026','green'],['⏳ Fiche de paie en cours','—','blue'],['⏳ AEM en attente','—','blue']],
     e3:[['⚠ RIB intermittent manquant','24/03/2026','orange'],['⏳ Contrat en attente de données','—','blue']],
     e4:[['✓ Contrat signé','10/03/2026','green'],['✓ Fiche de paie envoyée','12/03/2026','green'],['✓ AEM validée','12/03/2026','green'],['✓ Certificat Congés Spectacles','12/03/2026','green']],

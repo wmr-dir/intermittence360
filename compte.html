@@ -350,7 +350,7 @@ tbody tr{cursor:pointer;transition:background .15s}
       <label class="form-label">Mot de passe</label>
       <input type="password" class="form-input" placeholder="••••••••" value="motdepasse">
     </div>
-    <button class="btn-login" onclick="goTo('onboarding')">Se connecter</button>
+    <button class="btn-login" onclick="doLogin()">Se connecter</button>
     <div class="login-hint">
       Votre mot de passe vous a été envoyé par email après votre inscription.<br>
       Pour le modifier, rendez-vous dans <a onclick="goTo('app');showPage('profil')">Paramètres → Profil</a> une fois connecté.
@@ -485,7 +485,7 @@ tbody tr{cursor:pointer;transition:background .15s}
     <div class="pending-icon">⏳</div>
     <div class="pending-title">Votre compte est en cours de vérification</div>
     <div class="pending-sub">Notre équipe examine vos documents. Vous recevrez un email dès que votre espace sera certifié — généralement sous 48h ouvrées.<br><br>En attendant, découvrez comment fonctionne votre futur espace client !</div>
-    <div style="background:rgba(37,99,235,.05);border:1px solid rgba(37,99,235,.15);border-radius:10px;padding:.75rem 1rem;font-size:.8rem;color:var(--accent);margin-bottom:2rem">📬 Un email vous sera envoyé à <strong>marie@lesartsdusud.fr</strong> dès la certification</div>
+    <div style="background:rgba(37,99,235,.05);border:1px solid rgba(37,99,235,.15);border-radius:10px;padding:.75rem 1rem;font-size:.8rem;color:var(--accent);margin-bottom:2rem">📬 Un email vous sera envoyé à <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="513c30233834113d34223023252235242224357f3723">[email&#160;protected]</a></strong> dès la certification</div>
     <h3 style="font-size:.95rem;font-weight:700;color:var(--blue);margin-bottom:1rem;text-align:left">🎬 Découvrez votre futur espace en vidéo</h3>
     <div class="video-grid">
       <div class="video-card">
@@ -956,7 +956,14 @@ tbody tr{cursor:pointer;transition:background .15s}
   <div class="sub-menu-footer"><button class="btn btn-primary" style="width:100%;justify-content:center" onclick="closeSubMenu()">Télécharger la sélection</button></div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── LOGIN ──
+function doLogin() {
+  var email = document.querySelector('#screen-login input[type=email]').value;
+  var pwd = document.querySelector('#screen-login input[type=password]').value;
+  if(!email || !pwd) { alert('Veuillez renseigner votre email et mot de passe.'); return; }
+  goTo('onboarding');
+}
 // ── NAVIGATION ──
 function goTo(screen) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -1105,10 +1112,4 @@ function sendChat() {
 
 // ── MONTH FILTER ──
 function openMonthFilter() {
-  const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-  const years = [2024,2025,2026];
-  alert('Sélecteur de mois : dans la version production, un calendrier s\'affiche ici pour filtrer les données par mois et année.');
-}
-</script>
-</body>
-</html>
+  const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','
